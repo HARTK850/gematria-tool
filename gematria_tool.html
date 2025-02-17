@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מחשבון גימטרייה והמחמאות</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    pre {
+      background-color: #1e1e1e;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    .loader {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #00ff00;
+    }
+  </style>
+</head>
+<body>
+  <h1>מחשבון גימטרייה והמחמאות</h1>
+  <input type="text" id="nameInput" placeholder="הכנס שם בעברית (זכר)">
+  <input type="file" id="fileInput" accept=".txt">
+  <button onclick="calculateGematria()">חשב גימטרייה</button>
+  <div id="output"></div>
+  <div id="loader" class="loader"></div>
+
+  <script>
+    const gematriaValues = {
+      'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
+      'י': 10, 'כ': 20, 'ל': 30, 'מ': 40, 'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90,
+      'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400
+    };
+
+    function getGematria(text) {
+      return text.split('').reduce((sum, char) => sum + (gematriaValues[char] || 0), 0);
+    }
+
+    async function calculateGematria() {
+      const name = document.getElementById('nameInput').value.trim();
+      const file = document.getElementById('fileInput').files[0];
+      const output = document.getElementById('output');
+      const loader = document.getElementById('loader');
+      output.innerHTML = '';
+      loader.innerHTML = 'מחשב...';
+
+      if (!name || !file) {
+        alert('אנא הזן שם ובחר קובץ טקסט.');
+        return;
+      }
+
+      let nameGematria = 0;
+      name.split('').forEach(char => {
+        const value = gematriaValues[char] || 0;
+        output.innerHTML += `${char} = ${value}<br>`;
+        nameGematria += value;
+      });
+
+      output.innerHTML += `<strong>סך הכל: ${nameGematria}</strong><br>`;
+
+      const text = await file.text();
+      const compliments = text.split(/\s+/);
+
+      let foundResults = false;
+      let stack = [];
+
+      function searchCompliments(index, currentSum, currentWords) {
+        if (currentSum === nameGematria) {
+          output.innerHTML += `<p>${currentWords.join(' ')}</p>`;
+          foundResults = true;
+        }
+        if (index >= compliments.length) return;
+
+        let nextWord = compliments[index];
+        let nextValue = getGematria(nextWord);
+
+        searchCompliments(index + 1, currentSum, currentWords);
+
+        searchCompliments(index + 1, currentSum + nextValue, [...currentWords, nextWord]);
+
+        let withVav = 'ו' + nextWord;
+        let withVavValue = getGematria(withVav);
+
+        searchCompliments(index + 1, currentSum + withVavValue, [...currentWords, withVav]);
+      }
+
+      searchCompliments(0, 0, []);
+      loader.innerHTML = foundResults ? 'סיים חישוב' : 'לא נמצאו תוצאות מתאימות';
+    }
+  </script>
+</body>
+</html>
