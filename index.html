@@ -15,52 +15,63 @@
   <script>
     const gematriaMap = {/* מפה כמו קודם */};
 
-    function calcGematria(str) {/* כמו קודם */}
+    function calcGematria(str) {
+      let sum = 0;
+      for (let ch of str) {
+        sum += gematriaMap[ch] || 0;
+      }
+      return sum;
+    }
+
+    function precomputeGematria(lines) {
+      const map = {};
+      for (const line of lines) {
+        map[line] = calcGematria(line);
+      }
+      return map;
+    }
+
+    function findCombinations(lines, target) {
+      const results = [];
+      const gemMap = precomputeGematria(lines);
+      
+      function search(index, current, sum) {
+        if (sum === target) {
+          results.push(current.join(' '));
+          return;
+        }
+        if (sum > target || index >= lines.length) return;
+
+        for (let i = index; i < lines.length; i++) {
+          const line = lines[i];
+          const lineSum = gemMap[line] + (current.length > 0 ? gematriaMap['ו'] : 0);
+          search(i + 1, [...current, line], sum + lineSum);
+        }
+      }
+
+      search(0, [], 0);
+      return results;
+    }
 
     function startCalculation() {
       const name = document.getElementById('nameInput').value;
       const file = document.getElementById('fileInput').files[0];
       if (!name || !file) return alert('אנא הכנס שם ובחר קובץ');
 
-      const worker = new Worker(URL.createObjectURL(new Blob([`(${workerCode.toString()})()`], { type: 'application/javascript' })));
-      worker.onmessage = function(e) {
-        const data = e.data;
-        if (data.status === 'progress') {
-          document.getElementById('output').innerHTML += `<p>${data.result}</p>`;
-        } else if (data.status === 'done') {
-          document.getElementById('output').innerHTML += '<p style="color: green;">חישוב הסתיים!</p>';
+      const targetGematria = calcGematria(name);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const lines = reader.result.split(/\r?\n/);
+        const results = findCombinations(lines, targetGematria);
+        if (results.length > 0) {
+          document.getElementById('output').innerHTML = results.map(r => `<p>${r}</p>`).join('') + '<p style="color: green;">חישוב הסתיים!</p>';
+        } else {
+          document.getElementById('output').innerHTML = '<p style="color: red;">לא נמצאו מחמאות תואמות.</p>';
         }
       };
-
-      const reader = new FileReader();
-      reader.onload = () => worker.postMessage({ name, fileContent: reader.result });
       reader.readAsText(file);
-    }
-
-    function workerCode() {
-      self.onmessage = function(e) {
-        const { name, fileContent } = e.data;
-        const targetGematria = /* חישוב הגימטריה של השם */;
-        const lines = fileContent.split(/\r?\n/);
-        let found = false;
-
-        for (let i = 0; i < lines.length; i++) {
-          let current = '';
-          let currentSum = 0;
-          for (let j = i; j < lines.length; j++) {
-            const line = lines[j];
-            current += (current ? ' ו' : '') + line;
-            currentSum += /* חישוב הגימטריה של שורה נוכחית + ו */;
-
-            if (currentSum === targetGematria) {
-              self.postMessage({ status: 'progress', result: current });
-              found = true;
-            }
-          }
-        }
-        self.postMessage({ status: 'done' });
-      }
     }
   </script>
 </body>
 </html>
+
