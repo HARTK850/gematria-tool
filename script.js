@@ -12,6 +12,7 @@ function calculateWordGematria(word) {
 // חישוב גימטרייה של השם והצגת התוצאות
 function calculateGematria() {
     const name = document.getElementById('inputName').value.trim();
+    const gender = document.getElementById('gender').value;
     if (!name) return;
 
     const gematriaResults = document.getElementById('gematriaResults');
@@ -38,7 +39,10 @@ function calculateGematria() {
     totalP.innerHTML = `<strong>סך הכל גימטרייה: ${totalGematria}</strong>`;
     gematriaResults.appendChild(totalP);
 
-    fetch("compliments.txt")
+    // בחירת הקובץ לפי מגדר
+    const fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+
+    fetch(fileToLoad)
         .then(response => response.text())
         .then(text => findMatchingCompliments(text, totalGematria))
         .catch(error => {
