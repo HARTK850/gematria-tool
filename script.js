@@ -23,14 +23,13 @@ function calculateGematria() {
     loading.style.display = "block";
     finished.style.display = "none";
 
-    let totalGematria = 0;
-
+    let totalGematria = name.split('').reduce((sum, char) => sum + (gematriaMap[char] || 0), 0);
+    
+    // הצגת פירוט חישוב הגימטריה
     name.split('').forEach(char => {
         if (gematriaMap[char]) {
-            const charGematria = gematriaMap[char];
-            totalGematria += charGematria;
             const p = document.createElement("p");
-            p.textContent = `${char} = ${charGematria}`;
+            p.textContent = `${char} = ${gematriaMap[char]}`;
             gematriaResults.appendChild(p);
         }
     });
@@ -59,26 +58,54 @@ function findMatchingCompliments(text, targetGematria) {
     let found = 0;
 
     for (let i = 0; i < compliments.length; i++) {
-        let words = [compliments[i]];
-        let sum = calculateWordGematria(compliments[i]);
+        let compliment1 = compliments[i];
+        let sum1 = calculateWordGematria(compliment1);
+
+        // הצגת מחמאה יחידה אם היא מתאימה
+        if (sum1 === targetGematria) {
+            addComplimentResult(compliment1, sum1);
+            found++;
+        }
 
         for (let j = i + 1; j < compliments.length; j++) {
-            sum += calculateWordGematria("ו") + calculateWordGematria(compliments[j]);
-            words.push("ו" + compliments[j]);
+            let compliment2 = compliments[j];
+            let sum2 = sum1 + calculateWordGematria("ו") + calculateWordGematria(compliment2);
 
-            if (sum === targetGematria) {
-                const p = document.createElement("p");
-                p.innerHTML = `<strong>${words.join(" ")}</strong>`;
-                complimentsResults.appendChild(p);
+            // הצגת שילוב מחמאות עם "ו" - אך ללא הוספת "ו" למחמאה האחרונה
+            if (sum2 === targetGematria) {
+                addComplimentResult(compliment1 + " ו" + compliment2, sum2);
                 found++;
             }
         }
     }
 
     if (found === 0) {
-        complimentsResults.innerHTML = "<p>לא נמצאו מחמאות תואמות</p>";
+        complimentsResults.innerHTML = "<p>לא נמצאו מחמאות מתאימות</p>";
     }
 
     loading.style.display = "none";
     finished.style.display = "block";
+}
+
+function addComplimentResult(complimentText, gematriaValue) {
+    const complimentsResults = document.getElementById('complimentsResults');
+
+    const div = document.createElement("div");
+    div.classList.add("compliment-item");
+
+    const textSpan = document.createElement("span");
+    textSpan.textContent = complimentText;
+
+    const button = document.createElement("button");
+    button.textContent = "ℹ️";
+    button.classList.add("info-button");
+    button.onclick = () => showGematriaDetails(complimentText);
+
+    div.appendChild(textSpan);
+    div.appendChild(button);
+    complimentsResults.appendChild(div);
+}
+
+function showGematriaDetails(complimentText) {
+    alert(`פירוט גימטרייה ל"${complimentText}": ${calculateWordGematria(complimentText)}`);
 }
