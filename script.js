@@ -4,12 +4,10 @@ const gematriaMap = {
     'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400
 };
 
-// פונקציה לחישוב גימטרייה של מילה
 function calculateWordGematria(word) {
     return word.split('').reduce((sum, char) => sum + (gematriaMap[char] || 0), 0);
 }
 
-// חישוב גימטרייה של השם והצגת התוצאות
 function calculateGematria() {
     const name = document.getElementById('inputName').value.trim();
     const gender = document.getElementById('gender').value;
@@ -18,10 +16,12 @@ function calculateGematria() {
     const gematriaResults = document.getElementById('gematriaResults');
     const complimentsResults = document.getElementById('complimentsResults');
     const loading = document.getElementById('loading');
+    const finished = document.getElementById('finished');
 
     gematriaResults.innerHTML = "";
     complimentsResults.innerHTML = "";
     loading.style.display = "block";
+    finished.style.display = "none";
 
     let totalGematria = 0;
 
@@ -39,7 +39,6 @@ function calculateGematria() {
     totalP.innerHTML = `<strong>סך הכל גימטרייה: ${totalGematria}</strong>`;
     gematriaResults.appendChild(totalP);
 
-    // בחירת הקובץ לפי מגדר
     const fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
 
     fetch(fileToLoad)
@@ -51,13 +50,13 @@ function calculateGematria() {
         });
 }
 
-// חיפוש מחמאות תואמות
 function findMatchingCompliments(text, targetGematria) {
-    const loading = document.getElementById('loading');
     const complimentsResults = document.getElementById('complimentsResults');
+    const loading = document.getElementById('loading');
+    const finished = document.getElementById('finished');
 
     let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
-    let found = false;
+    let found = 0;
 
     for (let i = 0; i < compliments.length; i++) {
         let words = [compliments[i]];
@@ -71,14 +70,15 @@ function findMatchingCompliments(text, targetGematria) {
                 const p = document.createElement("p");
                 p.innerHTML = `<strong>${words.join(" ")}</strong>`;
                 complimentsResults.appendChild(p);
-                found = true;
+                found++;
             }
         }
     }
 
-    if (!found) {
+    if (found === 0) {
         complimentsResults.innerHTML = "<p>לא נמצאו מחמאות תואמות</p>";
     }
 
     loading.style.display = "none";
+    finished.style.display = "block";
 }
