@@ -97,7 +97,7 @@ function addComplimentResult(complimentText, gematriaValue) {
     textSpan.textContent = complimentText;
 
     const button = document.createElement("button");
-    button.textContent = "ℹ️";
+    button.textContent = "פירוט גימטרייה";
     button.classList.add("info-button");
     button.onclick = () => showGematriaDetails(complimentText);
 
@@ -108,4 +108,11 @@ function addComplimentResult(complimentText, gematriaValue) {
 
 function showGematriaDetails(complimentText) {
     alert(`פירוט גימטרייה ל"${complimentText}": ${calculateWordGematria(complimentText)}`);
+}
+
+function הצגת_פירוט(מזהה) {
+    let פירוט = document.getElementById("פירוט_" + מזהה);
+    if (פירוט) {
+        פירוט.style.display = (פירוט.style.display === "none") ? "block" : "none";
+    }
 }
