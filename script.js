@@ -23,9 +23,8 @@ function calculateGematria() {
     loading.style.display = "block";
     finished.style.display = "none";
 
-    let totalGematria = name.split('').reduce((sum, char) => sum + (gematriaMap[char] || 0), 0);
+    let totalGematria = calculateWordGematria(name);
     
-    // הצגת פירוט חישוב הגימטריה
     name.split('').forEach(char => {
         if (gematriaMap[char]) {
             const p = document.createElement("p");
@@ -42,52 +41,46 @@ function calculateGematria() {
 
     fetch(fileToLoad)
         .then(response => response.text())
-        .then(text => findMatchingCompliments(text, totalGematria))
+        .then(text => findMatchingCompliments(text, totalGematria, name))
         .catch(error => {
             console.error("שגיאה בטעינת המחמאות", error);
             loading.style.display = "none";
         });
 }
 
-function findMatchingCompliments(text, targetGematria) {
+function findMatchingCompliments(text, targetGematria, name) {
     const complimentsResults = document.getElementById('complimentsResults');
     const loading = document.getElementById('loading');
     const finished = document.getElementById('finished');
 
     let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
-    let found = 0;
+    let foundCompliments = new Set();
 
-    for (let i = 0; i < compliments.length; i++) {
-        let compliment1 = compliments[i];
-        let sum1 = calculateWordGematria(compliment1);
+    let sortedCompliments = [];
 
-        // הצגת מחמאה יחידה אם היא מתאימה
-        if (sum1 === targetGematria) {
-            addComplimentResult(compliment1, sum1);
-            found++;
-        }
-
-        for (let j = i + 1; j < compliments.length; j++) {
-            let compliment2 = compliments[j];
-            let sum2 = sum1 + calculateWordGematria("ו") + calculateWordGematria(compliment2);
-
-            // הצגת שילוב מחמאות עם "ו" - אך ללא הוספת "ו" למחמאה האחרונה
-            if (sum2 === targetGematria) {
-                addComplimentResult(compliment1 + " ו" + compliment2, sum2);
-                found++;
-            }
+    for (let compliment of compliments) {
+        let sum = calculateWordGematria(compliment);
+        if (sum === targetGematria && !foundCompliments.has(compliment) && !foundCompliments.has(reverseWords(compliment))) {
+            foundCompliments.add(compliment);
+            sortedCompliments.push(compliment);
         }
     }
 
-    if (found === 0) {
+    sortedCompliments.sort((a, b) => a.localeCompare(b));
+
+    if (sortedCompliments.length === 0) {
         complimentsResults.innerHTML = "<p>לא נמצאו מחמאות מתאימות</p>";
+    } else {
+        sortedCompliments.forEach(compliment => {
+            addComplimentResult(compliment, name);
+        });
     }
 
     loading.style.display = "none";
     finished.style.display = "block";
 }
 
-function addComplimentResult(complimentText, gematriaValue) {
+function addComplimentResult(complimentText, name) {
     const complimentsResults = document.getElementById('complimentsResults');
 
     const div = document.createElement("div");
@@ -96,23 +89,39 @@ function addComplimentResult(complimentText, gematriaValue) {
     const textSpan = document.createElement("span");
     textSpan.textContent = complimentText;
 
+    highlightFirstLetter(textSpan, name);
+
+    const detailsDiv = document.createElement("div");
+    detailsDiv.style.display = "none";
+    detailsDiv.classList.add("gematria-details");
+    detailsDiv.innerHTML = generateGematriaDetails(complimentText);
+
     const button = document.createElement("button");
     button.textContent = "פירוט גימטרייה";
     button.classList.add("info-button");
-    button.onclick = () => showGematriaDetails(complimentText);
+    button.style.backgroundColor = "green";
+    button.onclick = () => {
+        detailsDiv.style.display = detailsDiv.style.display === "none" ? "block" : "none";
+    };
 
     div.appendChild(textSpan);
     div.appendChild(button);
+    div.appendChild(detailsDiv);
     complimentsResults.appendChild(div);
 }
 
-function showGematriaDetails(complimentText) {
-    alert(`פירוט גימטרייה ל"${complimentText}": ${calculateWordGematria(complimentText)}`);
+function generateGematriaDetails(compliment) {
+    return compliment.split('').map(char => `${char} = ${gematriaMap[char] || 0}`).join('<br>') +
+           `<br><strong>סך הכל גימטרייה: ${calculateWordGematria(compliment)}</strong>`;
 }
 
-function הצגת_פירוט(מזהה) {
-    let פירוט = document.getElementById("פירוט_" + מזהה);
-    if (פירוט) {
-        פירוט.style.display = (פירוט.style.display === "none") ? "block" : "none";
+function highlightFirstLetter(element, name) {
+    let firstLetter = element.textContent.charAt(0);
+    if (name.includes(firstLetter)) {
+        element.innerHTML = `<strong>${firstLetter}</strong>${element.textContent.slice(1)}`;
     }
+}
+
+function reverseWords(phrase) {
+    return phrase.split(' ').reverse().join(' ');
 }
