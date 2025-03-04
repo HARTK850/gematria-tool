@@ -96,13 +96,21 @@ function addComplimentResult(complimentText, name) {
     detailsDiv.classList.add("gematria-details");
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
-    const button = document.createElement("button");
-    button.textContent = "פירוט גימטרייה";
-    button.classList.add("info-button");
-    button.style.backgroundColor = "green";
-    button.onclick = () => {
-        detailsDiv.style.display = detailsDiv.style.display === "none" ? "block" : "none";
-    };
+const button = document.createElement("button");
+button.textContent = "פירוט גימטרייה";
+button.classList.add("info-button");
+button.style.backgroundColor = "green";
+
+button.onclick = () => {
+    if (detailsDiv.style.display === "none") {
+        detailsDiv.style.display = "block";
+        button.textContent = "סגור פירוט גימטרייה";
+    } else {
+        detailsDiv.style.display = "none";
+        button.textContent = "פירוט גימטרייה";
+    }
+};
+
 
     div.appendChild(textSpan);
     div.appendChild(button);
