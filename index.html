@@ -22,6 +22,17 @@
         <div id="gematriaResults"></div>
 
         <h2>מחמאות תואמות:</h2>
+
+<div id="printOptionsContainer">
+    <button id="printButton">🖨️</button>
+</div>
+
+<div id="printOptions" style="display:none;">
+    <label><input type="radio" name="printChoice" value="complimentsOnly"> הדפסת מחמאות בלבד</label><br>
+    <label><input type="radio" name="printChoice" value="withGematria"> הדפסת מחמאות עם פירוט גימטרייה</label><br>
+    <button onclick="handlePrint()">אישור</button>
+</div>
+    
         <div id="complimentsResults"></div>
 
         <div id="loading">מחפש התאמות...</div>
