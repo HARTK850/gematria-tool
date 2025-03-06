@@ -55,14 +55,27 @@ function findMatchingCompliments(text, targetGematria, name) {
 
     let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
     let foundCompliments = new Set();
-
     let sortedCompliments = [];
 
+    // בדיקה רגילה של מחמאה בודדת
     for (let compliment of compliments) {
         let sum = calculateWordGematria(compliment);
         if (sum === targetGematria && !foundCompliments.has(compliment) && !foundCompliments.has(reverseWords(compliment))) {
             foundCompliments.add(compliment);
             sortedCompliments.push(compliment);
+        }
+    }
+
+    // בדיקה עם חיבור של שתי מחמאות בעזרת "ו"
+    for (let i = 0; i < compliments.length; i++) {
+        for (let j = i + 1; j < compliments.length; j++) {
+            let combinedCompliment = compliments[i] + " ו" + compliments[j];
+            let combinedSum = calculateWordGematria(compliments[i]) + calculateWordGematria("ו") + calculateWordGematria(compliments[j]);
+
+            if (combinedSum === targetGematria && !foundCompliments.has(combinedCompliment)) {
+                foundCompliments.add(combinedCompliment);
+                sortedCompliments.push(combinedCompliment);
+            }
         }
     }
 
@@ -79,6 +92,7 @@ function findMatchingCompliments(text, targetGematria, name) {
     loading.style.display = "none";
     finished.style.display = "block";
 }
+
 
 function addComplimentResult(complimentText, name) {
     const complimentsResults = document.getElementById('complimentsResults');
