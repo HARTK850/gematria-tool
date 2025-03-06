@@ -104,35 +104,60 @@ function addComplimentResult(complimentText, name) {
 
     const textSpan = document.createElement("span");
     textSpan.textContent = complimentText;
-
+    
     highlightFirstLetter(textSpan, name);
 
+    // יצירת כפתור מחיקה
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "🗑️";
+    deleteButton.classList.add("delete-button");
+    deleteButton.onclick = () => div.remove(); 
+
+    // יצירת כפתור העתקה
+    const copyButton = document.createElement("button");
+    copyButton.textContent = "📋";
+    copyButton.classList.add("copy-button");
+    copyButton.onclick = () => {
+        navigator.clipboard.writeText(complimentText);
+        alert("הטקסט הועתק!");
+    };
+
+    // יצירת כפתור "פירוט גימטרייה"
     const detailsDiv = document.createElement("div");
     detailsDiv.style.display = "none";
     detailsDiv.classList.add("gematria-details");
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
-const button = document.createElement("button");
-button.textContent = "פירוט גימטרייה";
-button.classList.add("info-button");
-button.style.backgroundColor = "green";
+    const detailsButton = document.createElement("button");
+    detailsButton.textContent = "פירוט גימטרייה";
+    detailsButton.classList.add("info-button");
+    detailsButton.style.backgroundColor = "green";
 
-button.onclick = () => {
-    if (detailsDiv.style.display === "none") {
-        detailsDiv.style.display = "block";
-        button.textContent = "סגור פירוט גימטרייה";
-    } else {
-        detailsDiv.style.display = "none";
-        button.textContent = "פירוט גימטרייה";
-    }
-};
+    detailsButton.onclick = () => {
+        if (detailsDiv.style.display === "none") {
+            detailsDiv.style.display = "block";
+            detailsButton.textContent = "סגור פירוט גימטרייה";
+        } else {
+            detailsDiv.style.display = "none";
+            detailsButton.textContent = "פירוט גימטרייה";
+        }
+    };
 
-
+    // יצירת div נוסף לכפתורים ושינוי המיקום שלהם לצד הנגדי
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.classList.add("buttons-container");
+    buttonsContainer.appendChild(deleteButton);
+    buttonsContainer.appendChild(copyButton);
+    
+    // הוספת האלמנטים למבנה התצוגה
     div.appendChild(textSpan);
-    div.appendChild(button);
+    div.appendChild(buttonsContainer); // הצמדת כפתורי מחיקה והעתקה לצד אחד
+    div.appendChild(detailsButton); // הצמדת הכפתור הירוק לצד השני
     div.appendChild(detailsDiv);
+
     complimentsResults.appendChild(div);
 }
+
 
 function generateGematriaDetails(compliment) {
     return compliment.split('').map(char => `${char} = ${gematriaMap[char] || 0}`).join('<br>') +
@@ -148,4 +173,86 @@ function highlightFirstLetter(element, name) {
 
 function reverseWords(phrase) {
     return phrase.split(' ').reverse().join(' ');
+}
+
+document.getElementById("printButton").addEventListener("click", function() {
+    document.getElementById("printOptions").style.display = "block";
+});
+
+function handlePrint() {
+    const choice = document.querySelector('input[name="printChoice"]:checked');
+    if (!choice) return alert("בחר אפשרות הדפסה");
+
+    let printableContent = "";
+    if (choice.value === "complimentsOnly") {
+        printableContent = document.getElementById("complimentsResults").innerHTML;
+    } else if (choice.value === "withGematria") {
+        document.querySelectorAll(".gematria-details").forEach(div => div.style.display = "block");
+        printableContent = document.getElementById("complimentsResults").innerHTML;
+    }
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write("<html><head><title>הדפסה</title></head><body>" + printableContent + "</body></html>");
+    printWindow.document.close();
+    printWindow.print();
+}
+
+document.getElementById("downloadButton").addEventListener("click", function() {
+    document.getElementById("downloadOptions").style.display = "block";
+    document.getElementById("formatOptions").style.display = "none";
+});
+
+function showFormatOptions() {
+    const choice = document.querySelector('input[name="downloadChoice"]:checked');
+    if (!choice) return alert("בחר אפשרות הורדה");
+
+    document.getElementById("downloadOptions").style.display = "none";
+    document.getElementById("formatOptions").style.display = "block";
+}
+
+function handleDownload() {
+    const contentChoice = document.querySelector('input[name="downloadChoice"]:checked');
+    const formatChoice = document.querySelector('input[name="formatChoice"]:checked');
+    if (!contentChoice || !formatChoice) return alert("בחרת את כל האפשרויות?");
+
+    let content = "";
+    if (contentChoice.value === "complimentsOnly") {
+        content = document.getElementById("complimentsResults").innerText;
+    } else if (contentChoice.value === "withGematria") {
+        document.querySelectorAll(".gematria-details").forEach(div => div.style.display = "block");
+        content = document.getElementById("complimentsResults").innerText;
+    }
+
+    if (formatChoice.value === "txt") {
+        const blob = new Blob([content], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "מחמאות.txt";
+        link.click();
+    } else if (formatChoice.value === "pdf") {
+        const pdfWindow = window.open("", "_blank");
+        pdfWindow.document.write("<html><head><title>PDF</title></head><body><pre>" + content + "</pre></body></html>");
+        pdfWindow.document.close();
+        pdfWindow.print();
+    } else if (formatChoice.value === "png") {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const width = 800;
+        const height = 400;
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = "black";
+        ctx.font = "20px Arial";
+        ctx.fillText(content, 20, 50);
+
+        canvas.toBlob(function(blob) {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "מחמאות.png";
+            link.click();
+        });
+    }
 }
