@@ -107,22 +107,7 @@ function addComplimentResult(complimentText, name) {
     
     highlightFirstLetter(textSpan, name);
 
-    // יצירת כפתור מחיקה
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "🗑️";
-    deleteButton.classList.add("delete-button");
-    deleteButton.onclick = () => div.remove(); 
-
-    // יצירת כפתור העתקה
-    const copyButton = document.createElement("button");
-    copyButton.textContent = "📋";
-    copyButton.classList.add("copy-button");
-    copyButton.onclick = () => {
-        navigator.clipboard.writeText(complimentText);
-        alert("הטקסט הועתק!");
-    };
-
-    // יצירת כפתור "פירוט גימטרייה"
+       // יצירת כפתור "פירוט גימטרייה"
     const detailsDiv = document.createElement("div");
     detailsDiv.style.display = "none";
     detailsDiv.classList.add("gematria-details");
@@ -143,11 +128,28 @@ function addComplimentResult(complimentText, name) {
         }
     };
 
+    
+    // יצירת כפתור מחיקה
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "🗑️";
+    deleteButton.classList.add("delete-button");
+    deleteButton.onclick = () => div.remove(); 
+
+    // יצירת כפתור העתקה
+    const copyButton = document.createElement("button");
+    copyButton.textContent = "📋";
+    copyButton.classList.add("copy-button");
+    copyButton.onclick = () => {
+        navigator.clipboard.writeText(complimentText);
+        alert("הטקסט הועתק!");
+    };
+
     // יצירת div נוסף לכפתורים ושינוי המיקום שלהם לצד הנגדי
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("buttons-container");
     buttonsContainer.appendChild(deleteButton);
     buttonsContainer.appendChild(copyButton);
+    
     
     // הוספת האלמנטים למבנה התצוגה
     div.appendChild(textSpan);
