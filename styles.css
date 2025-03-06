@@ -116,3 +116,28 @@ select {
     font-size: 16px;
     cursor: pointer;
 }
+
+
+/* סגנון הכפתורים */
+.delete-button, .copy-button {
+    width: 24px; /* הקטנת הרוחב */
+    height: 24px; /* הקטנת הגובה */
+    font-size: 16px; /* גודל טקסט קטן יותר */
+    padding: 2px;
+    border: none;
+    background-color: green;
+    color: white;
+    cursor: pointer;
+    display: block; /* סידור אחד מעל השני */
+    margin-bottom: 5px; /* מרווח קטן בין הכפתורים */
+}
+
+/* מיקום בצד ימין של המחמאה */
+.buttons-container {
+    position: absolute;
+    right: -35px; /* מקם בצד ימין בדיוק */
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column; /* מוודא שהכפתורים יהיו אחד מעל השני */
+}
