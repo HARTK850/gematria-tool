@@ -128,21 +128,6 @@ function addComplimentResult(complimentText, name) {
         }
     };
 
-    
-    // יצירת כפתור מחיקה
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "🗑️";
-    deleteButton.classList.add("delete-button");
-    deleteButton.onclick = () => div.remove(); 
-
-    // יצירת כפתור העתקה
-    const copyButton = document.createElement("button");
-    copyButton.textContent = "📋";
-    copyButton.classList.add("copy-button");
-    copyButton.onclick = () => {
-        navigator.clipboard.writeText(complimentText);
-        alert("הטקסט הועתק!");
-    };
 
     // יצירת div נוסף לכפתורים ושינוי המיקום שלהם לצד הנגדי
     const buttonsContainer = document.createElement("div");
