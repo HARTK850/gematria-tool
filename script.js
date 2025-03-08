@@ -185,8 +185,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function openPrintDialog() {
     let dialog = createDialog("אפשרויות הדפסה", [
-        { text: "הדפסת מחמאות בלבד", id: "printComplimentsOnly" },
-        { text: "הדפסת מחמאות עם פירוט הגימטרייה", id: "printWithGematria" }
+        { text: "הדפסת המחמאות בלבד", id: "printComplimentsOnly" },
+
+
+
+        { text: "הדפסת המחמאות עם פירוט הגימטרייה", id: "printWithGematria" }
     ], handlePrintSelection);
 }
 
@@ -217,8 +220,11 @@ function printSection(sectionIds) {
 
 function openDownloadDialog() {
     let firstDialog = createDialog("אפשרויות הורדה", [
-        { text: "הורדת מחמאות בלבד", id: "downloadComplimentsOnly" },
-        { text: "הורדת מחמאות עם פירוט הגימטרייה", id: "downloadWithGematria" }
+        { text: "הורדת המחמאות בלבד", id: "downloadComplimentsOnly" },
+
+
+        
+        { text: "הורדת המחמאות עם פירוט הגימטרייה", id: "downloadWithGematria" }
     ], function (selectedOption) {
         openFormatDialog(selectedOption);
     });
