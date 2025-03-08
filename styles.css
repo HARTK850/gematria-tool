@@ -116,3 +116,64 @@ select {
     font-size: 16px;
     cursor: pointer;
 }
+
+
+#saveOptions {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#saveOptions button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#saveOptions button:hover {
+    background-color: #45a049;
+}
+
+/* עיצוב חלונות קופצים */
+.dialog-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 300px;
+}
+
+.dialog-box h3 {
+    margin-bottom: 10px;
+}
+
+.dialog-box button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    background-color: #008CBA;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+}
+
+.dialog-box button:hover {
+    background-color: #007bb5;
+}
