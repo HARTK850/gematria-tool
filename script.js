@@ -321,4 +321,62 @@ function createDialog(title, options, callback) {
     dialog.appendChild(confirmButton);
 
     document.body.appendChild(dialog);
+
+
+    function hideSaveButtons() {
+    document.getElementById("saveOptions").style.display = "none";
+}
+
+function showSaveButtons() {
+    document.getElementById("saveOptions").style.display = "block";
+}
+
+function printSection(sectionIds) {
+    hideSaveButtons();
+    setTimeout(() => {
+        let content = "";
+        if (Array.isArray(sectionIds)) {
+            sectionIds.forEach(id => {
+                content += document.getElementById(id).outerHTML;
+            });
+        } else {
+            content = document.getElementById(sectionIds).outerHTML;
+        }
+
+        let printWindow = window.open("", "", "width=800,height=600");
+        printWindow.document.write(`<html><head><title>הדפסה</title></head><body>${content}</body></html>`);
+        printWindow.document.close();
+        printWindow.print();
+
+        showSaveButtons();
+    }, 100);
+}
+
+function downloadAsPDF(content) {
+    hideSaveButtons();
+    setTimeout(() => {
+        let doc = new jsPDF();
+        doc.text(content, 10, 10);
+        doc.save("מחמאות.pdf");
+        showSaveButtons();
+    }, 100);
+}
+
+function downloadAsImage(content) {
+    hideSaveButtons();
+    setTimeout(() => {
+        let element = document.createElement("div");
+        element.innerHTML = content;
+        document.body.appendChild(element);
+
+        html2canvas(element).then(canvas => {
+            let link = document.createElement("a");
+            link.href = canvas.toDataURL("image/png");
+            link.download = "מחמאות.png";
+            link.click();
+            document.body.removeChild(element);
+            showSaveButtons();
+        });
+    }, 100);
+}
 }
