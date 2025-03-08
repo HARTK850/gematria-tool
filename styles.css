@@ -118,32 +118,33 @@ select {
 }
 
 
-#saveOptions {
-    position: fixed;
-    left: 10px;
-    top: 10px;
+.save-buttons {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 5px;
+    position: absolute;
+    left: -60px; /* קובע את המרחק מהכרטיס */
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-#saveOptions button {
-    width: 50px;
-    height: 50px;
+.save-buttons button {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: none;
     background-color: #4CAF50;
     color: white;
-    font-size: 20px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-#saveOptions button:hover {
+.save-buttons button:hover {
     background-color: #45a049;
 }
 
-/* עיצוב חלונות קופצים */
+
 .dialog-box {
     position: fixed;
     top: 50%;
@@ -154,21 +155,40 @@ select {
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 300px;
+    width: 350px;
 }
 
 .dialog-box h3 {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.dialog-box .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dialog-box .option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+}
+
+.dialog-box input[type="checkbox"] {
+    transform: scale(1.5);
 }
 
 .dialog-box button {
     width: 100%;
-    margin-top: 10px;
-    padding: 10px;
+    margin-top: 15px;
+    padding: 12px;
     border: none;
     background-color: #008CBA;
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     cursor: pointer;
     transition: background-color 0.3s;
     border-radius: 5px;
