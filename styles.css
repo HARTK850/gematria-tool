@@ -123,3 +123,11 @@ select {
     font-size: 16px;
     cursor: pointer;
 }
+
+
+.compliment-number {
+    font-weight: bold;
+    margin-left: 8px;
+    color: #333;
+    display: inline-block;
+}
