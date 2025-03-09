@@ -5,7 +5,14 @@ body {
     background-color: #f8f9fa;
     margin: 0;
     padding: 20px;
+
+    /* הוספת תמונת רקע */
+    background-image: url('background.jpg'); /* שנה לנתיב התמונה שלך */
+    background-size: cover; /* שהתמונה תכסה את כל הדף */
+    background-position: center; /* שהתמונה תהיה ממורכזת */
+    background-repeat: no-repeat; /* למנוע חזרה של התמונה */
 }
+
 
 .container {
     background: white;
