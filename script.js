@@ -104,47 +104,35 @@ function addComplimentResult(complimentText, name) {
 
     const textSpan = document.createElement("span");
     textSpan.textContent = complimentText;
-    
+
     highlightFirstLetter(textSpan, name);
 
-       // יצירת כפתור "פירוט גימטרייה"
     const detailsDiv = document.createElement("div");
     detailsDiv.style.display = "none";
     detailsDiv.classList.add("gematria-details");
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
-    const detailsButton = document.createElement("button");
-    detailsButton.textContent = "פירוט גימטרייה";
-    detailsButton.classList.add("info-button");
-    detailsButton.style.backgroundColor = "green";
+const button = document.createElement("button");
+button.textContent = "פירוט גימטרייה";
+button.classList.add("info-button");
+button.style.backgroundColor = "green";
 
-    detailsButton.onclick = () => {
-        if (detailsDiv.style.display === "none") {
-            detailsDiv.style.display = "block";
-            detailsButton.textContent = "סגור פירוט גימטרייה";
-        } else {
-            detailsDiv.style.display = "none";
-            detailsButton.textContent = "פירוט גימטרייה";
-        }
-    };
+button.onclick = () => {
+    if (detailsDiv.style.display === "none") {
+        detailsDiv.style.display = "block";
+        button.textContent = "סגור פירוט גימטרייה";
+    } else {
+        detailsDiv.style.display = "none";
+        button.textContent = "פירוט גימטרייה";
+    }
+};
 
 
-    // יצירת div נוסף לכפתורים ושינוי המיקום שלהם לצד הנגדי
-    const buttonsContainer = document.createElement("div");
-    buttonsContainer.classList.add("buttons-container");
-    buttonsContainer.appendChild(deleteButton);
-    buttonsContainer.appendChild(copyButton);
-    
-    
-    // הוספת האלמנטים למבנה התצוגה
     div.appendChild(textSpan);
-    div.appendChild(buttonsContainer); // הצמדת כפתורי מחיקה והעתקה לצד אחד
-    div.appendChild(detailsButton); // הצמדת הכפתור הירוק לצד השני
+    div.appendChild(button);
     div.appendChild(detailsDiv);
-
     complimentsResults.appendChild(div);
 }
-
 
 function generateGematriaDetails(compliment) {
     return compliment.split('').map(char => `${char} = ${gematriaMap[char] || 0}`).join('<br>') +
@@ -161,4 +149,3 @@ function highlightFirstLetter(element, name) {
 function reverseWords(phrase) {
     return phrase.split(' ').reverse().join(' ');
 }
-
