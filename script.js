@@ -86,9 +86,10 @@ function findMatchingCompliments(text, targetGematria, name) {
     if (sortedCompliments.length === 0) {
         complimentsResults.innerHTML = "<p>לא נמצאו מחמאות מתאימות</p>";
     } else {
-        sortedCompliments.forEach(compliment => {
-            addComplimentResult(compliment, name);
-        });
+sortedCompliments.forEach((compliment, index) => {
+    addComplimentResult(compliment, name, index);
+});
+
     }
 
     loading.style.display = "none";
@@ -96,11 +97,20 @@ function findMatchingCompliments(text, targetGematria, name) {
 }
 
 
-function addComplimentResult(complimentText, name) {
+function addComplimentResult(complimentText, name, index = null) {
     const complimentsResults = document.getElementById('complimentsResults');
 
     const div = document.createElement("div");
     div.classList.add("compliment-item");
+
+    // יצירת אלמנט מספר המחמאה
+    const numberSpan = document.createElement("span");
+    numberSpan.classList.add("compliment-number");
+
+    // אם index קיים, הצג את המספר
+    if (index !== null) {
+        numberSpan.textContent = (index + 1) + ". "; // מחמאה ראשונה תהיה 1, השנייה 2 וכו'
+    }
 
     const textSpan = document.createElement("span");
     textSpan.textContent = complimentText;
@@ -112,22 +122,23 @@ function addComplimentResult(complimentText, name) {
     detailsDiv.classList.add("gematria-details");
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
-const button = document.createElement("button");
-button.textContent = "פירוט גימטרייה";
-button.classList.add("info-button");
-button.style.backgroundColor = "green";
+    const button = document.createElement("button");
+    button.textContent = "פירוט גימטרייה";
+    button.classList.add("info-button");
+    button.style.backgroundColor = "green";
 
-button.onclick = () => {
-    if (detailsDiv.style.display === "none") {
-        detailsDiv.style.display = "block";
-        button.textContent = "סגור פירוט גימטרייה";
-    } else {
-        detailsDiv.style.display = "none";
-        button.textContent = "פירוט גימטרייה";
-    }
-};
+    button.onclick = () => {
+        if (detailsDiv.style.display === "none") {
+            detailsDiv.style.display = "block";
+            button.textContent = "סגור פירוט גימטרייה";
+        } else {
+            detailsDiv.style.display = "none";
+            button.textContent = "פירוט גימטרייה";
+        }
+    };
 
-
+    // הוספת האלמנטים למחמאה
+    div.appendChild(numberSpan); // הוספת המספר לפני הטקסט
     div.appendChild(textSpan);
     div.appendChild(button);
     div.appendChild(detailsDiv);
