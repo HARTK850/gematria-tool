@@ -242,3 +242,59 @@ function highlightFirstLetter(element, name) {
         element.innerHTML = `<strong>${firstLetter}</strong>${element.textContent.slice(1)}`;
     }
 }
+
+
+document.getElementById("saveOptionsButton").addEventListener("click", function () {
+    const menu = document.getElementById("saveOptionsMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+});
+
+// סגירה אוטומטית של התפריט אם לוחצים מחוץ לו
+document.addEventListener("click", function (event) {
+    if (!event.target.closest(".options-container")) {
+        document.getElementById("saveOptionsMenu").style.display = "none";
+    }
+});
+
+// פונקציה להעתקת מחמאות
+document.getElementById("copyComplimentsButton").addEventListener("click", function () {
+    let compliments = document.querySelectorAll(".compliment-item"); // כל המחמאות
+    let textToCopy = "";
+
+    compliments.forEach(compliment => {
+        let mainText = compliment.querySelector(".main-text").innerText; // המחמאה עצמה
+        let gematriaDetails = compliment.querySelector(".gematria-details");
+
+        if (gematriaDetails && gematriaDetails.style.display !== "none") {
+            textToCopy += `${mainText} (${gematriaDetails.innerText})\n`; // עם פירוט גימטרייה
+        } else {
+            textToCopy += `${mainText}\n`; // בלי פירוט גימטרייה
+        }
+    });
+
+    navigator.clipboard.writeText(textToCopy.trim()).then(() => {
+        alert("המחמאות הועתקו בהצלחה!");
+    });
+});
+
+// פונקציה להדפסת המחמאות
+document.getElementById("printComplimentsButton").addEventListener("click", function () {
+    let printableContent = "";
+    let compliments = document.querySelectorAll(".compliment-item"); // כל המחמאות
+
+    compliments.forEach(compliment => {
+        let mainText = compliment.querySelector(".main-text").innerText; // המחמאה עצמה
+        let gematriaDetails = compliment.querySelector(".gematria-details");
+
+        if (gematriaDetails && gematriaDetails.style.display !== "none") {
+            printableContent += `<p>${mainText} (${gematriaDetails.innerText})</p>`; // עם פירוט גימטרייה
+        } else {
+            printableContent += `<p>${mainText}</p>`; // בלי פירוט גימטרייה
+        }
+    });
+
+    let printWindow = window.open("", "", "width=600,height=600");
+    printWindow.document.write(`<html><head><title>הדפסת מחמאות</title></head><body>${printableContent}</body></html>`);
+    printWindow.document.close();
+    printWindow.print();
+});
