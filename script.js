@@ -244,26 +244,22 @@ function highlightFirstLetter(element, name) {
 }
 
 
-document.getElementById("saveOptionsButton").addEventListener("click", function () {
-    const menu = document.getElementById("saveOptionsMenu");
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-});
-
 document.addEventListener("DOMContentLoaded", function () {
     const saveOptionsButton = document.getElementById("saveOptionsButton");
     const saveOptionsMenu = document.getElementById("saveOptionsMenu");
     const copyComplimentsButton = document.getElementById("copyComplimentsButton");
     const printComplimentsButton = document.getElementById("printComplimentsButton");
 
-    // בדוק אם האלמנטים קיימים לפני שמוסיפים אירועים
+    // בדיקת קיום האלמנטים
     if (saveOptionsButton && saveOptionsMenu) {
-        saveOptionsButton.addEventListener("click", function () {
+        saveOptionsButton.addEventListener("click", function (event) {
+            event.stopPropagation(); // מונע סגירה מיידית של התפריט
             saveOptionsMenu.style.display = (saveOptionsMenu.style.display === "block") ? "none" : "block";
         });
 
-        // סגירה אוטומטית של התפריט אם לוחצים מחוץ לו
+        // סגירת התפריט אם לוחצים מחוץ לו
         document.addEventListener("click", function (event) {
-            if (!event.target.closest(".options-container") && event.target !== saveOptionsButton) {
+            if (!saveOptionsMenu.contains(event.target) && event.target !== saveOptionsButton) {
                 saveOptionsMenu.style.display = "none";
             }
         });
