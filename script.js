@@ -126,45 +126,51 @@ function findMatchingCompliments(text, targetGematria, name) {
     finished.style.display = "block";
 }
 
-function addComplimentResult(complimentText, name, index = null) {
+function findMatchingCompliments(text, targetGematria, name) {
     const complimentsResults = document.getElementById('complimentsResults');
+    const loading = document.getElementById('loading');
+    const finished = document.getElementById('finished');
 
-    const div = document.createElement("div");
-    div.classList.add("compliment-item");
+    let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
+    let foundCompliments = new Set();
+    let sortedCompliments = [];
 
-    const numberSpan = document.createElement("span");
-    numberSpan.classList.add("compliment-number");
-
-    if (index !== null) {
-        numberSpan.textContent = (index + 1) + ". ";
+    // בדיקה רגילה של מחמאה בודדת
+    for (let compliment of compliments) {
+        let sum = calculateWordGematria(compliment);
+        if (sum === targetGematria && !foundCompliments.has(compliment) && !foundCompliments.has(reverseWords(compliment))) {
+            foundCompliments.add(compliment);
+            sortedCompliments.push(compliment);
+        }
     }
 
-    const textSpan = document.createElement("span");
-    textSpan.textContent = complimentText;
+    // בדיקה עם חיבור של שתי מחמאות בעזרת "ו"
+    for (let i = 0; i < compliments.length; i++) {
+        for (let j = i + 1; j < compliments.length; j++) {
+            let combinedCompliment = compliments[i] + " ו" + compliments[j];
+            let combinedSum = calculateWordGematria(compliments[i]) + calculateWordGematria("ו") + calculateWordGematria(compliments[j]);
 
-    highlightFirstLetter(textSpan, name);
+            if (combinedSum === targetGematria && !foundCompliments.has(combinedCompliment)) {
+                foundCompliments.add(combinedCompliment);
+                sortedCompliments.push(combinedCompliment);
+            }
+        }
+    }
 
-    const detailsDiv = document.createElement("div");
-    detailsDiv.style.display = "none";
-    detailsDiv.classList.add("gematria-details");
-    detailsDiv.innerHTML = generateGematriaDetails(complimentText);
+    sortedCompliments.sort((a, b) => a.localeCompare(b));
 
-    const button = document.createElement("button");
-    button.textContent = "פירוט גימטרייה";
-    button.classList.add("info-button");
-    button.style.backgroundColor = "green";
+    if (sortedCompliments.length === 0) {
+        complimentsResults.innerHTML = "<p>לא נמצאו מחמאות מתאימות</p>";
+    } else {
+        sortedCompliments.forEach(compliment => {
+            addComplimentResult(compliment, name);
+        });
+    }
 
-    button.onclick = () => {
-        detailsDiv.style.display = detailsDiv.style.display === "none" ? "block" : "none";
-        button.textContent = detailsDiv.style.display === "none" ? "פירוט גימטרייה" : "סגור פירוט";
-    };
-
-    div.appendChild(numberSpan);
-    div.appendChild(textSpan);
-    div.appendChild(button);
-    div.appendChild(detailsDiv);
-    complimentsResults.appendChild(div);
+    loading.style.display = "none";
+    finished.style.display = "block";
 }
+
 
 function generateGematriaDetails(compliment) {
     return compliment.split('').map(char => `${char} = ${gematriaMap[char] || 0}`).join('<br>') +
