@@ -94,6 +94,55 @@ function loadFromUrlParams() {
 // הפעלת טעינת הפרמטרים בהתחלה
 window.onload = loadFromUrlParams;
 
+function addComplimentResult(complimentText, name, index = null) {
+    const complimentsResults = document.getElementById('complimentsResults');
+
+    const div = document.createElement("div");
+    div.classList.add("compliment-item");
+
+    // יצירת אלמנט מספר המחמאה
+    const numberSpan = document.createElement("span");
+    numberSpan.classList.add("compliment-number");
+
+    // אם index קיים, הצג את המספר
+    if (index !== null) {
+        numberSpan.textContent = (index + 1) + ". "; // מחמאה ראשונה תהיה 1, השנייה 2 וכו'
+    }
+
+    const textSpan = document.createElement("span");
+    textSpan.textContent = complimentText;
+
+    highlightFirstLetter(textSpan, name);
+
+    const detailsDiv = document.createElement("div");
+    detailsDiv.style.display = "none";
+    detailsDiv.classList.add("gematria-details");
+    detailsDiv.innerHTML = generateGematriaDetails(complimentText);
+
+    const button = document.createElement("button");
+    button.textContent = "פירוט גימטרייה";
+    button.classList.add("info-button");
+    button.style.backgroundColor = "green";
+
+    button.onclick = () => {
+        if (detailsDiv.style.display === "none") {
+            detailsDiv.style.display = "block";
+            button.textContent = "סגור פירוט גימטרייה";
+        } else {
+            detailsDiv.style.display = "none";
+            button.textContent = "פירוט גימטרייה";
+        }
+    };
+
+    // הוספת האלמנטים למחמאה
+    div.appendChild(numberSpan); // הוספת המספר לפני הטקסט
+    div.appendChild(textSpan);
+    div.appendChild(button);
+    div.appendChild(detailsDiv);
+    complimentsResults.appendChild(div);
+}
+
+
 function findMatchingCompliments(text, targetGematria, name) {
     const complimentsResults = document.getElementById('complimentsResults');
     const loading = document.getElementById('loading');
