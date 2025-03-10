@@ -298,3 +298,12 @@ document.getElementById("printComplimentsButton").addEventListener("click", func
     printWindow.document.close();
     printWindow.print();
 });
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("saveOptionsButton").addEventListener("click", function () {
+        const menu = document.getElementById("saveOptionsMenu");
+        menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    });
+});
