@@ -214,6 +214,14 @@ function findMatchingCompliments(text, targetGematria, name) {
         }
     }
 
+        const copyButton = document.createElement("button");
+    copyButton.textContent = "📋";
+    copyButton.classList.add("copy-button");
+    copyButton.onclick = () => {
+        navigator.clipboard.writeText(complimentText);
+        alert("הטקסט הועתק!");
+    };
+
     // מיון התוצאות כדי שהתצוגה תהיה מסודרת
     finalCompliments.sort((a, b) => a.localeCompare(b));
 
