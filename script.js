@@ -187,6 +187,7 @@ function findMatchingCompliments(text, targetGematria, name) {
     let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
     let foundCompliments = new Set();
     let sortedCompliments = [];
+    let finalCompliments = []; // מערך חדש שיאחד את שתי הבדיקות
 
     // בדיקה רגילה של מחמאה בודדת
     for (let compliment of compliments) {
@@ -197,6 +198,9 @@ function findMatchingCompliments(text, targetGematria, name) {
         }
     }
 
+    // קודם נכניס את המחמאות הבודדות
+    finalCompliments.push(...sortedCompliments);
+
     // בדיקה עם חיבור של שתי מחמאות בעזרת "ו"
     for (let i = 0; i < compliments.length; i++) {
         for (let j = i + 1; j < compliments.length; j++) {
@@ -205,24 +209,26 @@ function findMatchingCompliments(text, targetGematria, name) {
 
             if (combinedSum === targetGematria && !foundCompliments.has(combinedCompliment)) {
                 foundCompliments.add(combinedCompliment);
-                sortedCompliments.push(combinedCompliment);
+                finalCompliments.push(combinedCompliment); // מוסיפים למחמאות הסופיות
             }
         }
     }
 
-    sortedCompliments.sort((a, b) => a.localeCompare(b));
+    // מיון התוצאות כדי שהתצוגה תהיה מסודרת
+    finalCompliments.sort((a, b) => a.localeCompare(b));
 
-    if (sortedCompliments.length === 0) {
+    if (finalCompliments.length === 0) {
         complimentsResults.innerHTML = "<p>לא נמצאו מחמאות מתאימות</p>";
     } else {
-        sortedCompliments.forEach(compliment => {
-            addComplimentResult(compliment, name);
+        finalCompliments.forEach((compliment, index) => {
+            addComplimentResult(compliment, name, index);
         });
     }
 
     loading.style.display = "none";
     finished.style.display = "block";
 }
+
 
 
 function generateGematriaDetails(compliment) {
