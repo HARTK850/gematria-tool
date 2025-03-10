@@ -126,6 +126,10 @@ function findMatchingCompliments(text, targetGematria, name) {
     finished.style.display = "block";
 }
 
+function reverseWords(phrase) {
+    return phrase.split(' ').reverse().join(' ');
+}
+
 function findMatchingCompliments(text, targetGematria, name) {
     const complimentsResults = document.getElementById('complimentsResults');
     const loading = document.getElementById('loading');
