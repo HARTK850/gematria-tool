@@ -142,39 +142,6 @@ function addComplimentResult(complimentText, name, index = null) {
     complimentsResults.appendChild(div);
 }
 
-
-function findMatchingCompliments(text, targetGematria, name) {
-    const complimentsResults = document.getElementById('complimentsResults');
-    const loading = document.getElementById('loading');
-    const finished = document.getElementById('finished');
-
-    let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
-    let foundCompliments = new Set();
-    let sortedCompliments = [];
-
-    // בדיקה רגילה של מחמאה בודדת
-    for (let compliment of compliments) {
-        let sum = calculateWordGematria(compliment);
-        if (sum === targetGematria && !foundCompliments.has(compliment)) {
-            foundCompliments.add(compliment);
-            sortedCompliments.push(compliment);
-        }
-    }
-
-    sortedCompliments.sort((a, b) => a.localeCompare(b));
-
-    if (sortedCompliments.length === 0) {
-        complimentsResults.innerHTML = "<p>לא נמצאו מחמאות מתאימות</p>";
-    } else {
-        sortedCompliments.forEach((compliment, index) => {
-            addComplimentResult(compliment, name, index);
-        });
-    }
-
-    loading.style.display = "none";
-    finished.style.display = "block";
-}
-
 function reverseWords(phrase) {
     return phrase.split(' ').reverse().join(' ');
 }
