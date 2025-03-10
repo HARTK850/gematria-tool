@@ -247,17 +247,13 @@ function highlightFirstLetter(element, name) {
 document.addEventListener("DOMContentLoaded", function () {
     const saveOptionsButton = document.getElementById("saveOptionsButton");
     const saveOptionsMenu = document.getElementById("saveOptionsMenu");
-    const copyComplimentsButton = document.getElementById("copyComplimentsButton");
-    const printComplimentsButton = document.getElementById("printComplimentsButton");
 
-    // בדיקת קיום האלמנטים
     if (saveOptionsButton && saveOptionsMenu) {
         saveOptionsButton.addEventListener("click", function (event) {
-            event.stopPropagation(); // מונע סגירה מיידית של התפריט
+            event.stopPropagation();
             saveOptionsMenu.style.display = (saveOptionsMenu.style.display === "block") ? "none" : "block";
         });
 
-        // סגירת התפריט אם לוחצים מחוץ לו
         document.addEventListener("click", function (event) {
             if (!saveOptionsMenu.contains(event.target) && event.target !== saveOptionsButton) {
                 saveOptionsMenu.style.display = "none";
@@ -265,50 +261,60 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // פונקציה להעתקת מחמאות
+    // קריאה לפונקציה שמוסיפה אירועים למחמאות
+    הוסף_אירועים_למחמאות();
+
+    // מאזין לשינוי בתוכן המחמאות – יפעיל מחדש את הכפתורים
+    const complimentsContainer = document.getElementById("complimentsContainer"); // ודא שהקונטיינר קיים
+    if (complimentsContainer) {
+        const observer = new MutationObserver(הוסף_אירועים_למחמאות);
+        observer.observe(complimentsContainer, { childList: true, subtree: true });
+    }
+});
+
+// פונקציה שמוסיפה אירועים לכפתורים לאחר טעינת המחמאות
+function הוסף_אירועים_למחמאות() {
+    const copyComplimentsButton = document.getElementById("copyComplimentsButton");
+    const printComplimentsButton = document.getElementById("printComplimentsButton");
+
     if (copyComplimentsButton) {
-        copyComplimentsButton.addEventListener("click", function () {
-            let compliments = document.querySelectorAll(".compliment-item"); // כל המחמאות
+        copyComplimentsButton.onclick = function () {
+            let compliments = document.querySelectorAll(".compliment-item");
+            if (compliments.length === 0) {
+                alert("אין מחמאות להעתקה!");
+                return;
+            }
             let textToCopy = "";
-
             compliments.forEach(compliment => {
-                let mainText = compliment.querySelector(".main-text").innerText; // המחמאה עצמה
+                let mainText = compliment.querySelector(".main-text").innerText;
                 let gematriaDetails = compliment.querySelector(".gematria-details");
-
-                if (gematriaDetails && gematriaDetails.style.display !== "none") {
-                    textToCopy += `${mainText} (${gematriaDetails.innerText})\n`; // עם פירוט גימטרייה
-                } else {
-                    textToCopy += `${mainText}\n`; // בלי פירוט גימטרייה
-                }
+                textToCopy += gematriaDetails && gematriaDetails.style.display !== "none" 
+                    ? `${mainText} (${gematriaDetails.innerText})\n` 
+                    : `${mainText}\n`;
             });
-
-            navigator.clipboard.writeText(textToCopy.trim()).then(() => {
-                alert("המחמאות הועתקו בהצלחה!");
-            });
-        });
+            navigator.clipboard.writeText(textToCopy.trim()).then(() => alert("המחמאות הועתקו בהצלחה!"));
+        };
     }
 
-    // פונקציה להדפסת המחמאות
     if (printComplimentsButton) {
-        printComplimentsButton.addEventListener("click", function () {
+        printComplimentsButton.onclick = function () {
+            let compliments = document.querySelectorAll(".compliment-item");
+            if (compliments.length === 0) {
+                alert("אין מחמאות להדפסה!");
+                return;
+            }
             let printableContent = "";
-            let compliments = document.querySelectorAll(".compliment-item"); // כל המחמאות
-
             compliments.forEach(compliment => {
-                let mainText = compliment.querySelector(".main-text").innerText; // המחמאה עצמה
+                let mainText = compliment.querySelector(".main-text").innerText;
                 let gematriaDetails = compliment.querySelector(".gematria-details");
-
-                if (gematriaDetails && gematriaDetails.style.display !== "none") {
-                    printableContent += `<p>${mainText} (${gematriaDetails.innerText})</p>`; // עם פירוט גימטרייה
-                } else {
-                    printableContent += `<p>${mainText}</p>`; // בלי פירוט גימטרייה
-                }
+                printableContent += gematriaDetails && gematriaDetails.style.display !== "none"
+                    ? `<p>${mainText} (${gematriaDetails.innerText})</p>`
+                    : `<p>${mainText}</p>`;
             });
-
             let printWindow = window.open("", "", "width=600,height=600");
             printWindow.document.write(`<html><head><title>הדפסת מחמאות</title></head><body>${printableContent}</body></html>`);
             printWindow.document.close();
             printWindow.print();
-        });
+        };
     }
-});
+}
