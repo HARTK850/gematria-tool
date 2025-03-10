@@ -119,6 +119,15 @@ function addComplimentResult(complimentText, name, index = null) {
     detailsDiv.classList.add("gematria-details");
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
+            const copyButton = document.createElement("button");
+    copyButton.textContent = "📋";
+    copyButton.classList.add("copy-button");
+    copyButton.onclick = () => {
+        navigator.clipboard.writeText(complimentText);
+        alert("הטקסט הועתק!");
+    };
+
+
     const button = document.createElement("button");
     button.textContent = "פירוט גימטרייה";
     button.classList.add("info-button");
@@ -136,6 +145,7 @@ function addComplimentResult(complimentText, name, index = null) {
 
     // הוספת האלמנטים למחמאה
     div.appendChild(numberSpan); // הוספת המספר לפני הטקסט
+     div.appendChild(buttonsContainer);
     div.appendChild(textSpan);
     div.appendChild(button);
     div.appendChild(detailsDiv);
@@ -181,14 +191,7 @@ function findMatchingCompliments(text, targetGematria, name) {
         }
     }
 
-        const copyButton = document.createElement("button");
-    copyButton.textContent = "📋";
-    copyButton.classList.add("copy-button");
-    copyButton.onclick = () => {
-        navigator.clipboard.writeText(complimentText);
-        alert("הטקסט הועתק!");
-    };
-
+    
     // מיון התוצאות כדי שהתצוגה תהיה מסודרת
     finalCompliments.sort((a, b) => a.localeCompare(b));
 
