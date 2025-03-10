@@ -131,3 +131,17 @@ select {
     color: #333;
     display: inline-block;
 }
+#shareButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+#shareButton:hover {
+    background-color: #0056b3;
+}
