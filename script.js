@@ -27,6 +27,8 @@ function calculateWordGematria(word) {
 
 
 function calculateGematria() {
+    updateDetailsTitle("gematria"); // עדכון כותרת הפירוט בהתאם
+
 
     const name = document.getElementById('inputName').value.trim();
 
@@ -188,6 +190,103 @@ function loadFromUrlParams() {
 
 window.onload = loadFromUrlParams;
 
+
+
+function updateDetailsTitle(mode) {
+    const title = document.getElementById("detailsTitle");
+    title.textContent = mode === "gematria" ? "פירוט גימטרייה:" : "פירוט קונסטריכון:";
+}
+
+function calculateConstruction() {
+    const name = document.getElementById('inputName').value.trim();
+    const gender = document.getElementById('gender').value;
+
+    if (!name) return;
+
+    updateDetailsTitle("construction");
+
+    const gematriaResults = document.getElementById('gematriaResults');
+    const complimentsResults = document.getElementById('complimentsResults');
+    const loading = document.getElementById('loading');
+    const finished = document.getElementById('finished');
+
+    gematriaResults.innerHTML = "";
+    complimentsResults.innerHTML = "";
+    loading.style.display = "block";
+    finished.style.display = "none";
+
+    name.split('').forEach(char => {
+        const p = document.createElement("p");
+        p.textContent = char;
+        gematriaResults.appendChild(p);
+    });
+
+    const nameP = document.createElement("p");
+    nameP.innerHTML = `<strong>השם שהוכנס הוא: ${name}</strong>`;
+    gematriaResults.appendChild(nameP);
+
+    const countP = document.createElement("p");
+    countP.innerHTML = `<strong>מספר האותיות בשם הוא: ${name.length}</strong>`;
+    gematriaResults.appendChild(countP);
+
+    const fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+
+    if (complimentsCache[gender]) {
+        findMatchingComplimentsByLetters(complimentsCache[gender], name);
+    } else {
+        fetch(fileToLoad)
+            .then(response => response.text())
+            .then(text => {
+                complimentsCache[gender] = text;
+                findMatchingComplimentsByLetters(text, name);
+            })
+            .catch(error => {
+                console.error("שגיאה בטעינת המחמאות", error);
+                loading.style.display = "none";
+                complimentsResults.innerHTML = "<p style='color: red;'>שגיאה בטעינת המחמאות. נסה שוב מאוחר יותר.</p>";
+            });
+    }
+}
+
+function findMatchingComplimentsByLetters(text, name) {
+    const complimentsResults = document.getElementById('complimentsResults');
+    const loading = document.getElementById('loading');
+    const finished = document.getElementById('finished');
+
+    let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
+    let letters = new Set(name.split(''));
+    let foundLetters = new Set();
+    let notFoundLetters = [];
+
+    let groupedCompliments = {};
+
+    letters.forEach(letter => {
+        groupedCompliments[letter] = compliments.filter(compliment => compliment.startsWith(letter));
+        if (groupedCompliments[letter].length > 0) {
+            foundLetters.add(letter);
+        } else {
+            notFoundLetters.push(letter);
+        }
+    });
+
+    Object.keys(groupedCompliments).sort().forEach(letter => {
+        if (groupedCompliments[letter].length > 0) {
+            groupedCompliments[letter].forEach(compliment => {
+                addComplimentResult(compliment, name);
+            });
+        }
+    });
+
+    if (notFoundLetters.length > 0) {
+        const notFoundP = document.createElement("p");
+        notFoundP.style.color = "red";
+        notFoundP.innerHTML = `<strong>מצטערים! אבל לא נמצאו מחמאות שמתחילות באותיות הבאות: ${notFoundLetters.join(", ")}</strong>`;
+        complimentsResults.insertBefore(notFoundP, complimentsResults.firstChild);
+    }
+
+    loading.style.display = "none";
+    finished.style.display = "block";
+}
 
 
 
