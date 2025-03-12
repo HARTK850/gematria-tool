@@ -4023,6 +4023,9 @@ function calculateGematria() {
   const gender = document.getElementById('gender').value;
   if (!name) return;
 
+    const compliments = gender === "male" ? maleCompliments : femaleCompliments;
+    findMatchingCompliments(compliments, totalGematria, name);
+  
   const gematriaResults = document.getElementById('gematriaResults');
   const complimentsResults = document.getElementById('complimentsResults');
   const loading = document.getElementById('loading');
@@ -4051,8 +4054,6 @@ function calculateGematria() {
   totalP.innerHTML = `<strong>סך הכל גימטרייה: ${totalGematria}</strong>`;
   gematriaResults.appendChild(totalP);
 
-  const compliments = gender === "male" ? complimentsMale : complimentsFemale;
-  findMatchingCompliments(compliments, totalGematria, name);
 
   loading.style.display = "none";
   finished.style.display = "block";
