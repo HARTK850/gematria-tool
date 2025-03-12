@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מחשבון גימטרייה ומחמאות</title>
+    <title>מחשבון מחמאות</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>מחשבון גימטרייה ומחמאות</h1>
+        <h1>מחשבון מחמאות</h1>
         <div class="input-container">
             <input type="text" id="inputName" placeholder="הכנס שם">
             <select id="gender">
@@ -16,9 +16,12 @@
                 <option value="female">בת</option>
             </select>
         </div>
-        <button onclick="calculateGematria()">חשב</button>
+        <button onclick="calculateGematria()">חשב גימטרייה</button>
+        <button onclick="calculateConstruction()" style="background-color: green;">חשב קונסטריכון</button>
 
-        <h2>פירוט גימטרייה:</h2>
+
+        <h2 id="detailsTitle">פירוט:</h2>
+
         <div id="gematriaResults"></div>
 
         <h2>מחמאות תואמות:</h2>
