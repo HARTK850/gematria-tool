@@ -319,23 +319,21 @@ function addComplimentResult(complimentText, name, index = null) {
 
 
 if (document.getElementById("detailsTitle").textContent === "פירוט גימטרייה:") {
-    const button = document.createElement("button");
-    button.textContent = "פירוט גימטרייה";
-    button.classList.add("info-button");
-    button.style.backgroundColor = "green";
+const button = document.createElement("button");
+button.textContent = "פירוט גימטרייה";
+button.classList.add("info-button");
+button.style.backgroundColor = "green";
 
-    button.onclick = () => {
-        if (detailsDiv.style.display === "none") {
-            detailsDiv.style.display = "block";
-            button.textContent = "סגור פירוט גימטרייה";
-        } else {
-            detailsDiv.style.display = "none";
-            button.textContent = "פירוט גימטרייה";
-        }
-    };
+button.onclick = () => {
+    if (detailsDiv.style.display === "none") {
+        detailsDiv.style.display = "block";
+        button.textContent = "סגור פירוט גימטרייה";
+    } else {
+        detailsDiv.style.display = "none";
+        button.textContent = "פירוט גימטרייה";
+    }
+};
 
-    div.appendChild(button);
-}
 
 
     // הוספת האלמנטים למחמאה
