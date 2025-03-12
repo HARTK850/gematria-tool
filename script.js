@@ -269,13 +269,14 @@ function findMatchingComplimentsByLetters(text, name) {
         }
     });
 
-name.split('').forEach(letter => {
-    if (groupedCompliments[letter] && groupedCompliments[letter].length > 0) {
+Object.keys(groupedCompliments).sort().forEach(letter => {
+    if (groupedCompliments[letter].length > 0) {
         groupedCompliments[letter].forEach(compliment => {
             addComplimentResult(compliment, name);
         });
     }
 });
+
 
 
     if (notFoundLetters.length > 0) {
