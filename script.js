@@ -269,13 +269,14 @@ function findMatchingComplimentsByLetters(text, name) {
         }
     });
 
-    Object.keys(groupedCompliments).sort().forEach(letter => {
-        if (groupedCompliments[letter].length > 0) {
-            groupedCompliments[letter].forEach(compliment => {
-                addComplimentResult(compliment, name);
-            });
-        }
-    });
+name.split('').forEach(letter => {
+    if (groupedCompliments[letter] && groupedCompliments[letter].length > 0) {
+        groupedCompliments[letter].forEach(compliment => {
+            addComplimentResult(compliment, name);
+        });
+    }
+});
+
 
     if (notFoundLetters.length > 0) {
         const notFoundP = document.createElement("p");
@@ -316,6 +317,7 @@ function addComplimentResult(complimentText, name, index = null) {
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
 
+if (document.getElementById("detailsTitle").textContent === "פירוט גימטרייה:") {
     const button = document.createElement("button");
     button.textContent = "פירוט גימטרייה";
     button.classList.add("info-button");
@@ -330,6 +332,10 @@ function addComplimentResult(complimentText, name, index = null) {
             button.textContent = "פירוט גימטרייה";
         }
     };
+
+    div.appendChild(button);
+}
+
 
     // הוספת האלמנטים למחמאה
     div.appendChild(numberSpan); // הוספת המספר לפני הטקסט
