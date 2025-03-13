@@ -317,32 +317,33 @@ function addComplimentResult(complimentText, name, index = null) {
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
 
-if (document.getElementById("detailsTitle").textContent === "פירוט גימטרייה:") {
 const button = document.createElement("button");
-button.textContent = "פירוט גימטרייה";
-button.classList.add("info-button");
-button.style.backgroundColor = "green";
 
-button.onclick = () => {
-    if (detailsDiv.style.display === "none") {
-        detailsDiv.style.display = "block";
-        button.textContent = "סגור פירוט גימטרייה";
-    } else {
-        detailsDiv.style.display = "none";
-        button.textContent = "פירוט גימטרייה";
-    }
-};
+if (document.getElementById("detailsTitle").textContent === "פירוט גימטרייה:") {
+    button.textContent = "פירוט גימטרייה";
+    button.classList.add("info-button");
+    button.style.backgroundColor = "green";
+
+    button.onclick = () => {
+        if (detailsDiv.style.display === "none") {
+            detailsDiv.style.display = "block";
+            button.textContent = "סגור פירוט גימטרייה";
+        } else {
+            detailsDiv.style.display = "none";
+            button.textContent = "פירוט גימטרייה";
+        }
+    };
 
     div.appendChild(button);
 }
 
-    // הוספת האלמנטים למחמאה
-    div.appendChild(numberSpan); // הוספת המספר לפני הטקסט
-    div.appendChild(textSpan);
-    div.appendChild(button);
-    div.appendChild(detailsDiv);
-    complimentsResults.appendChild(div);
-}
+// הוספת האלמנטים למחמאה
+div.appendChild(numberSpan);
+div.appendChild(textSpan);
+div.appendChild(detailsDiv);
+complimentsResults.appendChild(div);
+
+
 
 function reverseWords(phrase) {
     return phrase.split(' ').reverse().join(' ');
