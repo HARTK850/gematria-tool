@@ -193,8 +193,6 @@ window.onload = loadFromUrlParams;
 function addGlobalDetailsButton() {
     const complimentsResults = document.getElementById('complimentsResults');
 
-    if (document.getElementById("globalDetailsButton")) return; // אם הכפתור כבר קיים, לא מוסיפים שוב
-
     const globalButton = document.createElement("button");
     globalButton.id = "globalDetailsButton";
     globalButton.textContent = "פירוט גימטרייה לכל המחמאות";
