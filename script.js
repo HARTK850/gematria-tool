@@ -184,6 +184,12 @@ function loadFromUrlParams() {
 }
 
 
+
+// הפעלת טעינת הפרמטרים בהתחלה
+
+window.onload = loadFromUrlParams;
+
+
 function addGlobalDetailsButton() {
     const complimentsResults = document.getElementById('complimentsResults');
 
@@ -214,12 +220,6 @@ function addGlobalDetailsButton() {
 
     complimentsResults.prepend(globalButton);
 }
-
-
-
-// הפעלת טעינת הפרמטרים בהתחלה
-
-window.onload = loadFromUrlParams;
 
 
 
@@ -302,7 +302,7 @@ function findMatchingComplimentsByLetters(text, name) {
     });
 
 name.split('').forEach(letter => {
-    let counter = 1; // ספירה מתחילה מחדש לכל אות
+    let counter = 0; // ספירה מתחילה מחדש לכל אות
 
     if (groupedCompliments[letter] && groupedCompliments[letter].length > 0) {
         groupedCompliments[letter].forEach(compliment => {
