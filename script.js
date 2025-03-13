@@ -100,27 +100,26 @@ function calculateGematria() {
 
     } else {
 
-        fetch(fileToLoad)
+fetch(fileToLoad)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(text => {
+        if (!text.trim()) {
+            throw new Error("הקובץ ריק");
+        }
+        complimentsCache[gender] = text;
+        findMatchingCompliments(text, totalGematria, name);
+    })
+    .catch(error => {
+        console.error("שגיאה בטעינת המחמאות:", error);
+        loading.style.display = "none";
+        complimentsResults.innerHTML = `<p style='color: red;'>שגיאה בטעינת המחמאות: ${error.message}</p>`;
+    });
 
-            .then(response => response.text())
-
-            .then(text => {
-
-                complimentsCache[gender] = text; // שמירת המחמאות בזיכרון
-
-                findMatchingCompliments(text, totalGematria, name);
-
-            })
-
-            .catch(error => {
-
-                console.error("שגיאה בטעינת המחמאות", error);
-
-                loading.style.display = "none";
-
-                complimentsResults.innerHTML = "<p style='color: red;'>שגיאה בטעינת המחמאות. נסה שוב מאוחר יותר.</p>";
-
-            });
 
     }
 
