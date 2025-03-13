@@ -334,7 +334,8 @@ button.onclick = () => {
     }
 };
 
-
+    div.appendChild(button);
+}
 
     // הוספת האלמנטים למחמאה
     div.appendChild(numberSpan); // הוספת המספר לפני הטקסט
