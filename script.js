@@ -303,34 +303,6 @@ function addComplimentResult(complimentText, name, index = null) {
     div.classList.add("compliment-item");
 
 
-    // יצירת כפתור ראשי לפירוט גימטריה לכל המחמאות
-const allGematriaButton = document.createElement("button");
-allGematriaButton.textContent = "פירוט גימטריה לכל המחמאות";
-allGematriaButton.classList.add("info-button");
-allGematriaButton.style.backgroundColor = "green";
-allGematriaButton.style.marginRight = "15px";
-
-// הוספת הכפתור לראש רשימת המחמאות
-complimentsResults.parentNode.insertBefore(allGematriaButton, complimentsResults);
-    
-
-    allGematriaButton.onclick = () => {
-    const detailsDivs = document.querySelectorAll(".details-div"); // מציאת כל ה-div-ים של פירוט גימטריה
-    const buttons = document.querySelectorAll(".info-button"); // מציאת כל כפתורי פירוט גימטריה
-
-    if (allGematriaButton.textContent === "פירוט גימטריה לכל המחמאות") {
-        // פתיחת פירוט גימטריה לכל המחמאות
-        allGematriaButton.textContent = "סגור פירוט גימטריה לכל המחמאות";
-        detailsDivs.forEach(div => div.style.display = "block");
-        buttons.forEach(button => button.textContent = "סגור פירוט גימטריה");
-    } else {
-        // סגירת פירוט גימטריה לכל המחמאות
-        allGematriaButton.textContent = "פירוט גימטריה לכל המחמאות";
-        detailsDivs.forEach(div => div.style.display = "none");
-        buttons.forEach(button => button.textContent = "פירוט גימטריה");
-    }
-};
-
     // יצירת אלמנט מספר המחמאה
     const numberSpan = document.createElement("span");
     numberSpan.classList.add("compliment-number");
