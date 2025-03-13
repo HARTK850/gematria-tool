@@ -300,28 +300,38 @@ function addComplimentResult(complimentText, name, index = null) {
     // יצירת אלמנט מספר המחמאה
     const numberSpan = document.createElement("span");
     numberSpan.classList.add("compliment-number");
+    numberSpan.style.fontSize = "20px"; // הגדלת גודל מספר המחמאה
+    numberSpan.style.fontWeight = "bold"; // הפיכת המספר למודגש
+    numberSpan.style.marginRight = "10px"; // רווח קטן מימין
 
     // אם index קיים, הצג את המספר
     if (index !== null) {
-        numberSpan.textContent = (index + 1) + ". "; // מחמאה ראשונה תהיה 1, השנייה 2 וכו'
+        numberSpan.textContent = (index + 1) + ". "; // מספר המחמאה
     }
 
+    // יצירת אלמנט המחמאה
     const textSpan = document.createElement("span");
     textSpan.textContent = complimentText;
+    textSpan.style.fontSize = "22px"; // הגדלת גודל הטקסט
+    textSpan.style.fontWeight = "bold"; // הפיכת המחמאות למודגשות
+    textSpan.style.marginRight = "15px"; // רווח קטן מימין
 
     highlightFirstLetter(textSpan, name);
 
+    // יצירת אלמנט פירוט הגימטרייה
     const detailsDiv = document.createElement("div");
     detailsDiv.style.display = "none";
     detailsDiv.classList.add("gematria-details");
     detailsDiv.innerHTML = generateGematriaDetails(complimentText);
 
     // רק אם מדובר ב"חשב גימטרייה", נוסיף את הכפתור
+    let button = null;
     if (document.getElementById("detailsTitle").textContent === "פירוט גימטרייה:") {
-        const button = document.createElement("button");
+        button = document.createElement("button");
         button.textContent = "פירוט גימטרייה";
         button.classList.add("info-button");
         button.style.backgroundColor = "green";
+        button.style.marginRight = "15px"; // רווח קטן מימין
 
         button.onclick = () => {
             if (detailsDiv.style.display === "none") {
@@ -332,14 +342,14 @@ function addComplimentResult(complimentText, name, index = null) {
                 button.textContent = "פירוט גימטרייה";
             }
         };
-
-        div.appendChild(button);
     }
 
-    // הוספת האלמנטים למחמאה
+    // הוספת האלמנטים למחמאה בסדר הנכון: מספר → טקסט → כפתור
     div.appendChild(numberSpan);
     div.appendChild(textSpan);
+    if (button) div.appendChild(button);
     div.appendChild(detailsDiv);
+
     complimentsResults.appendChild(div);
 }
 
