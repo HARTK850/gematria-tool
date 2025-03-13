@@ -184,6 +184,38 @@ function loadFromUrlParams() {
 }
 
 
+function addGlobalDetailsButton() {
+    const complimentsResults = document.getElementById('complimentsResults');
+
+    if (document.getElementById("globalDetailsButton")) return; // אם הכפתור כבר קיים, לא מוסיפים שוב
+
+    const globalButton = document.createElement("button");
+    globalButton.id = "globalDetailsButton";
+    globalButton.textContent = "פירוט גימטרייה לכל המחמאות";
+    globalButton.classList.add("info-button");
+    globalButton.style.backgroundColor = "green";
+    globalButton.style.display = "block";
+    globalButton.style.marginBottom = "10px";
+
+    globalButton.onclick = () => {
+        let allDetails = document.querySelectorAll(".gematria-details");
+        let allButtons = document.querySelectorAll(".info-button:not(#globalDetailsButton)");
+
+        if (globalButton.textContent === "פירוט גימטרייה לכל המחמאות") {
+            allDetails.forEach(detail => detail.style.display = "block");
+            allButtons.forEach(button => button.textContent = "סגור פירוט גימטרייה");
+            globalButton.textContent = "סגור פירוט גימטרייה לכל המחמאות";
+        } else {
+            allDetails.forEach(detail => detail.style.display = "none");
+            allButtons.forEach(button => button.textContent = "פירוט גימטרייה");
+            globalButton.textContent = "פירוט גימטרייה לכל המחמאות";
+        }
+    };
+
+    complimentsResults.prepend(globalButton);
+}
+
+
 
 // הפעלת טעינת הפרמטרים בהתחלה
 
@@ -243,6 +275,7 @@ function calculateConstruction() {
                 console.error("שגיאה בטעינת המחמאות", error);
                 loading.style.display = "none";
                 complimentsResults.innerHTML = "<p style='color: red;'>שגיאה בטעינת המחמאות. נסה שוב מאוחר יותר.</p>";
+                document.getElementById('complimentsResults').style.textAlign = "right";
             });
     }
 }
@@ -268,13 +301,18 @@ function findMatchingComplimentsByLetters(text, name) {
         }
     });
 
-Object.keys(groupedCompliments).sort().forEach(letter => {
-    if (groupedCompliments[letter].length > 0) {
+name.split('').forEach(letter => {
+    let counter = 1; // ספירה מתחילה מחדש לכל אות
+
+    if (groupedCompliments[letter] && groupedCompliments[letter].length > 0) {
         groupedCompliments[letter].forEach(compliment => {
-            addComplimentResult(compliment, name);
+            addComplimentResult(compliment, name, counter); // שמירה על המספור
+            counter++; // העלאת המספר לכל מחמאה
         });
     }
 });
+
+
 
 
 
