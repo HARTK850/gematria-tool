@@ -412,4 +412,3 @@ function highlightFirstLetter(element, name) {
         element.innerHTML = `<strong>${firstLetter}</strong>${element.textContent.slice(1)}`;
     }
 }
-} // סוגר חסר שכנראה גרם לשגיאה
