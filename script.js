@@ -300,67 +300,53 @@ name.split('').forEach(letter => {
 }
 
 
-function addComplimentResult(complimentText, name, index = null) {
-    const complimentsResults = document.getElementById('complimentsResults');
+function addComplimentResult(compliment, name, index) {
+    let complimentItem = document.createElement("div");
+    complimentItem.classList.add("compliment-item");
 
-    const div = document.createElement("div");
-    div.classList.add("compliment-item");
+    // מספר סידורי
+    let indexSpan = document.createElement("span");
+    indexSpan.classList.add("compliment-index");
+    indexSpan.textContent = index + ". ";
 
+    // טקסט המחמאה
+    let complimentText = document.createElement("span");
+    complimentText.classList.add("compliment-text");
+    complimentText.textContent = compliment;
 
-    // יצירת אלמנט מספר המחמאה
-    const numberSpan = document.createElement("span");
-    numberSpan.classList.add("compliment-number");
-    numberSpan.style.fontSize = "20px"; // הגדלת גודל מספר המחמאה
-    numberSpan.style.fontWeight = "bold"; // הפיכת המספר למודגש
-    numberSpan.style.marginRight = "10px"; // רווח קטן מימין
+    // כפתור העתקה 📋
+    let copyButton = document.createElement("button");
+    copyButton.classList.add("copy-button");
+    copyButton.textContent = "📋 העתק";
+    copyButton.onclick = function () {
+        copyToClipboard(compliment);
+    };
 
-    // אם index קיים, הצג את המספר
-    if (index !== null) {
-        numberSpan.textContent = (index + 1) + ". "; // מספר המחמאה
-    }
+    // כפתור פירוט גימטרייה
+    let detailsButton = document.createElement("button");
+    detailsButton.classList.add("details-button");
+    detailsButton.textContent = "פירוט גימטרייה";
+    detailsButton.onclick = function () {
+        toggleGematriaDetails(complimentItem, compliment);
+    };
 
-    // יצירת אלמנט המחמאה
-    const textSpan = document.createElement("span");
-    textSpan.textContent = complimentText;
-    textSpan.style.fontSize = "22px"; // הגדלת גודל הטקסט
-    textSpan.style.fontWeight = "bold"; // הפיכת המחמאות למודגשות
-    textSpan.style.marginRight = "15px"; // רווח קטן מימין
+    // הוספת האלמנטים ל-div של המחמאה
+    complimentItem.appendChild(indexSpan);
+    complimentItem.appendChild(complimentText);
+    complimentItem.appendChild(copyButton);
+    complimentItem.appendChild(detailsButton);
 
-    highlightFirstLetter(textSpan, name);
+    // הוספה לרשימת המחמאות
+    document.getElementById("complimentsResults").appendChild(complimentItem);
+}
 
-    // יצירת אלמנט פירוט הגימטרייה
-    const detailsDiv = document.createElement("div");
-    detailsDiv.style.display = "none";
-    detailsDiv.classList.add("gematria-details");
-    detailsDiv.innerHTML = generateGematriaDetails(complimentText);
-
-    // רק אם מדובר ב"חשב גימטרייה", נוסיף את הכפתור
-    let button = null;
-    if (document.getElementById("detailsTitle").textContent === "פירוט גימטרייה:") {
-        button = document.createElement("button");
-        button.textContent = "פירוט גימטרייה";
-        button.classList.add("info-button");
-        button.style.backgroundColor = "green";
-        button.style.marginRight = "15px"; // רווח קטן מימין
-
-        button.onclick = () => {
-            if (detailsDiv.style.display === "none") {
-                detailsDiv.style.display = "block";
-                button.textContent = "סגור פירוט גימטרייה";
-            } else {
-                detailsDiv.style.display = "none";
-                button.textContent = "פירוט גימטרייה";
-            }
-        };
-    }
-
-    // הוספת האלמנטים למחמאה בסדר הנכון: מספר → טקסט → כפתור
-    div.appendChild(numberSpan);
-    div.appendChild(textSpan);
-    if (button) div.appendChild(button);
-    div.appendChild(detailsDiv);
-
-    complimentsResults.appendChild(div);
+// פונקציה להעתקת טקסט ללוח (Clipboard)
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert("הטקסט הועתק בהצלחה!");
+    }).catch(err => {
+        console.error("שגיאה בהעתקה: ", err);
+    });
 }
 
 
