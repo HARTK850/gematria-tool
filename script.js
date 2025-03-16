@@ -300,54 +300,98 @@ name.split('').forEach(letter => {
 }
 
 
-function addComplimentResult(compliment, name, index) {
-    let complimentItem = document.createElement("div");
-    complimentItem.classList.add("compliment-item");
+function addComplimentResult(complimentText, name, index = null) {
+    const complimentsResults = document.getElementById('complimentsResults');
 
-    // מספר סידורי
-    let indexSpan = document.createElement("span");
-    indexSpan.classList.add("compliment-index");
-    indexSpan.textContent = index + ". ";
+    const div = document.createElement("div");
+    div.classList.add("compliment-item");
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.marginBottom = "10px";
+    div.style.padding = "10px";
+    div.style.border = "1px solid #ccc";
+    div.style.borderRadius = "5px";
+    div.style.backgroundColor = "#f9f9f9";
+    div.style.position = "relative";
 
-    // טקסט המחמאה
-    let complimentText = document.createElement("span");
-    complimentText.classList.add("compliment-text");
-    complimentText.textContent = compliment;
+    // יצירת כפתור העתקה
+    const copyButton = document.createElement("button");
+    copyButton.innerHTML = "📋";
+    copyButton.style.backgroundColor = "blue";
+    copyButton.style.color = "white";
+    copyButton.style.border = "none";
+    copyButton.style.borderRadius = "50%";
+    copyButton.style.width = "30px";
+    copyButton.style.height = "30px";
+    copyButton.style.fontSize = "18px";
+    copyButton.style.cursor = "pointer";
+    copyButton.style.marginRight = "10px";
+    copyButton.onclick = () => copyToClipboard(complimentText);
 
-    // כפתור העתקה 📋
-    let copyButton = document.createElement("button");
-    copyButton.classList.add("copy-button");
-    copyButton.textContent = "📋 העתק";
-    copyButton.onclick = function () {
-        copyToClipboard(compliment);
-    };
+    // יצירת אלמנט מספר המחמאה
+    const numberSpan = document.createElement("span");
+    numberSpan.classList.add("compliment-number");
+    numberSpan.style.fontSize = "20px";
+    numberSpan.style.fontWeight = "bold";
+    numberSpan.style.marginRight = "10px";
 
-    // כפתור פירוט גימטרייה
-    let detailsButton = document.createElement("button");
-    detailsButton.classList.add("details-button");
-    detailsButton.textContent = "פירוט גימטרייה";
-    detailsButton.onclick = function () {
-        toggleGematriaDetails(complimentItem, compliment);
-    };
+    if (index !== null) {
+        numberSpan.textContent = (index + 1) + ". ";
+    }
 
-    // הוספת האלמנטים ל-div של המחמאה
-    complimentItem.appendChild(indexSpan);
-    complimentItem.appendChild(complimentText);
-    complimentItem.appendChild(copyButton);
-    complimentItem.appendChild(detailsButton);
+    // יצירת אלמנט המחמאה
+    const textSpan = document.createElement("span");
+    textSpan.textContent = complimentText;
+    textSpan.style.fontSize = "22px";
+    textSpan.style.fontWeight = "bold";
+    textSpan.style.marginRight = "15px";
 
-    // הוספה לרשימת המחמאות
-    document.getElementById("complimentsResults").appendChild(complimentItem);
+    highlightFirstLetter(textSpan, name);
+
+    // יצירת אלמנט פירוט הגימטרייה
+    const detailsDiv = document.createElement("div");
+    detailsDiv.style.display = "none";
+    detailsDiv.classList.add("gematria-details");
+    detailsDiv.innerHTML = generateGematriaDetails(complimentText);
+
+    let button = null;
+    if (document.getElementById("detailsTitle").textContent === "פירוט גימטרייה:") {
+        button = document.createElement("button");
+        button.textContent = "פירוט גימטרייה";
+        button.classList.add("info-button");
+        button.style.backgroundColor = "green";
+        button.style.marginRight = "15px";
+
+        button.onclick = () => {
+            if (detailsDiv.style.display === "none") {
+                detailsDiv.style.display = "block";
+                button.textContent = "סגור פירוט גימטרייה";
+            } else {
+                detailsDiv.style.display = "none";
+                button.textContent = "פירוט גימטרייה";
+            }
+        };
+    }
+
+    // הוספת האלמנטים למחמאה בסדר הנכון: כפתור העתקה → מספר → טקסט → כפתור
+    div.appendChild(copyButton);
+    div.appendChild(numberSpan);
+    div.appendChild(textSpan);
+    if (button) div.appendChild(button);
+    div.appendChild(detailsDiv);
+
+    complimentsResults.appendChild(div);
 }
 
-// פונקציה להעתקת טקסט ללוח (Clipboard)
+// פונקציה להעתקת הטקסט ללוח
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert("הטקסט הועתק בהצלחה!");
+        alert("המחמאה הועתקה בהצלחה!");
     }).catch(err => {
         console.error("שגיאה בהעתקה: ", err);
     });
 }
+
 
 
 function reverseWords(phrase) {
