@@ -129,7 +129,6 @@ fetch(fileToLoad)
 
     shareButton.style.display = "block";
 
-    addGlobalDetailsButton();
 
     
 }
@@ -432,38 +431,3 @@ function highlightFirstLetter(element, name) {
     }
 }
 
-
-function addGlobalDetailsButton() {
-    const complimentsResults = document.getElementById('complimentsResults');
-
-    // אם הכפתור כבר קיים, לא מוסיפים אותו שוב
-    if (document.getElementById("globalDetailsButton")) return;
-
-    // יצירת כפתור ראשי לשליטה על פירוט הגימטרייה
-    const globalButton = document.createElement("button");
-    globalButton.id = "globalDetailsButton";
-    globalButton.textContent = "פירוט גימטרייה לכל המחמאות";
-    globalButton.classList.add("info-button");
-    globalButton.style.backgroundColor = "green";
-    globalButton.style.display = "block";
-    globalButton.style.marginBottom = "10px";
-
-    // פונקציה ללחיצה על הכפתור
-    globalButton.onclick = () => {
-        let allDetails = document.querySelectorAll(".gematria-details");
-        let allButtons = document.querySelectorAll(".info-button:not(#globalDetailsButton)");
-
-        if (globalButton.textContent === "פירוט גימטרייה לכל המחמאות") {
-            allDetails.forEach(detail => detail.style.display = "block");
-            allButtons.forEach(button => button.textContent = "סגור פירוט גימטרייה");
-            globalButton.textContent = "סגור פירוט גימטרייה לכל המחמאות";
-        } else {
-            allDetails.forEach(detail => detail.style.display = "none");
-            allButtons.forEach(button => button.textContent = "פירוט גימטרייה");
-            globalButton.textContent = "פירוט גימטרייה לכל המחמאות";
-        }
-    };
-
-    // הוספת הכפתור לרשימת המחמאות (מעל כל המחמאות)
-    complimentsResults.prepend(globalButton);
-}
