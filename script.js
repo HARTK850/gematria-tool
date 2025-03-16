@@ -134,8 +134,6 @@ fetch(fileToLoad)
 
 
 
-    
-}
 
 
 
@@ -465,6 +463,10 @@ function addGlobalDetailsButton() {
             globalButton.textContent = "פירוט גימטרייה לכל המחמאות";
         }
     };
+
+
+    window.calculateConstruction = calculateConstruction;
+window.calculateGematria = calculateGematria;
 
     // הוספת הכפתור לרשימת המחמאות (מעל כל המחמאות)
     complimentsResults.prepend(globalButton);
