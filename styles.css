@@ -11,6 +11,7 @@ body {
     background-size: cover; /* שהתמונה תכסה את כל הדף */
     background-position: center; /* שהתמונה תהיה ממורכזת */
     background-repeat: no-repeat; /* למנוע חזרה של התמונה */
+    background-attachment: fixed; /* שהתמונה תישאר קבועה במקומה */
 }
 
 
