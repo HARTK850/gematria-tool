@@ -501,3 +501,81 @@ window.calculateGematria = calculateGematria;
     // הוספת הכפתור לרשימת המחמאות (מעל כל המחמאות)
     complimentsResults.prepend(globalButton);
 }
+
+
+window.onload = function() {
+    addPrintButton();
+};
+
+function addPrintButton() {
+    const container = document.querySelector('.container');
+
+    // יצירת כפתור הדפסה
+    const printButton = document.createElement("button");
+    printButton.innerHTML = "🖨️"; // סמל מדפסת
+    printButton.classList.add("print-button");
+    printButton.style.position = "absolute";
+    printButton.style.top = "10px";
+    printButton.style.left = "10px";
+    printButton.style.width = "35px";
+    printButton.style.height = "35px";
+    printButton.style.borderRadius = "50%";
+    printButton.style.border = "none";
+    printButton.style.backgroundColor = "green";
+    printButton.style.color = "white";
+    printButton.style.fontSize = "18px";
+    printButton.style.cursor = "pointer";
+    printButton.title = "הדפס את כל הדף";
+
+    // אירוע לחיצה להדפסה
+    printButton.onclick = () => printContainer();
+
+    // הפיכת הקונטיינר ליחסי כדי שהכפתור יוצג נכון
+    container.style.position = "relative";
+
+    // הוספת הכפתור לתוך ה-container
+    container.prepend(printButton);
+}
+
+
+function printContainer() {
+    const container = document.querySelector('.container');
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.open();
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>הדפסה</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    direction: rtl;
+                    text-align: right;
+                }
+                .container {
+                    border: 1px solid #ccc;
+                    padding: 20px;
+                    margin: auto;
+                    border-radius: 5px;
+                    background-color: #ffffff;
+                    max-width: 800px;
+                }
+                button.print-button {
+                    display: none;
+                }
+            </style>
+        </head>
+        <body>
+            ${container.outerHTML}
+            <script>
+                window.onload = function() {
+                    window.print();
+                    setTimeout(() => window.close(), 100);
+                };
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
