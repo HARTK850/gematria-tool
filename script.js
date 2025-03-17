@@ -516,9 +516,10 @@ function addPrintButton() {
     printButton.classList.add("print-button");
     printButton.style.position = "absolute";
     printButton.style.top = "10px";
-    printButton.style.left = "10px";
-    printButton.style.width = "35px";
-    printButton.style.height = "35px";
+    printButton.style.left = "50%"; // מרכז הדף
+    printButton.style.transform = "translateX(-50%)"; // ממורכז בדיוק
+    printButton.style.width = "40px";
+    printButton.style.height = "40px";
     printButton.style.borderRadius = "50%";
     printButton.style.border = "none";
     printButton.style.backgroundColor = "green";
@@ -540,13 +541,14 @@ function addPrintButton() {
 
 function printContainer() {
     const container = document.querySelector('.container');
-
     const printWindow = window.open('', '_blank');
+
     printWindow.document.open();
     printWindow.document.write(`
         <html>
         <head>
             <title>הדפסה</title>
+            <link rel="stylesheet" href="styles.css"> <!-- קובץ ה-CSS המקורי שלך -->
             <style>
                 body {
                     font-family: Arial, sans-serif;
@@ -554,15 +556,11 @@ function printContainer() {
                     text-align: right;
                 }
                 .container {
-                    border: 1px solid #ccc;
-                    padding: 20px;
-                    margin: auto;
-                    border-radius: 5px;
-                    background-color: #ffffff;
                     max-width: 800px;
+                    margin: auto;
                 }
                 button.print-button {
-                    display: none;
+                    display: none; /* מסתיר את כפתור ההדפסה בהדפסה */
                 }
             </style>
         </head>
@@ -579,3 +577,4 @@ function printContainer() {
     `);
     printWindow.document.close();
 }
+
