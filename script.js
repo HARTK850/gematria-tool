@@ -522,7 +522,6 @@ function addPrintButton() {
     printButton.style.height = "40px";
     printButton.style.borderRadius = "50%";
     printButton.style.border = "none";
-    printButton.style.backgroundColor = "green";
     printButton.style.color = "white";
     printButton.style.fontSize = "18px";
     printButton.style.cursor = "pointer";
