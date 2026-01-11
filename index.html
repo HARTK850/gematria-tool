@@ -1,43 +1,737 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="מחשבון מחמאות, מחשבון גימטרייה, מחשבון אקונסטריכון, מחמאות, גימטרייה, אקונסטריכון">
     <meta name="description" content="מחפש מחמאות מותאמות לשם שלכם בגימטרייה או בראשי תיבות מתוך מאגר ענק של כ2,000 מחמאות">
-    <meta name="google-site-verification" content="xcc042jOsLSw-dJSeB4VKbRZxkXu2VCYhgywEHtES1U" />
     <title>מחשבון מחמאות</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .hebrew-text {
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .compliment-card {
+            border-left: 4px solid #4f46e5;
+        }
+        
+        .first-letter {
+            color: #4f46e5;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #4f46e5;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                background-color: white;
+            }
+            
+            .card {
+                box-shadow: none;
+                border: none;
+            }
+            
+            .compliment-card {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <h1>מחשבון מחמאות</h1>
-        <div class="input-container">
-            <input type="text" id="inputName" placeholder="הכנס שם">
-            <select id="gender">
-                <option value="male">זכר</option>
-                <option value="female">נקבה</option>
-            </select>
+<body class="min-h-screen bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-600 mb-2">מחשבון מחמאות</h1>
+            <p class="text-lg text-gray-600">הזינו את השם וקבלו מחמאות לפי הגימטריה או קונסטרוקציה של האותיות</p>
         </div>
-        <button onclick="calculateGematria()" style="background-color: green;">חשב גימטרייה</button>
-        <button onclick="calculateConstruction()" style="background-color: green;">חשב אקונסטריכון</button>
-
-
-
-        <h2 id="detailsTitle">פירוט:</h2>
-
-        <div id="gematriaResults"></div>
-
-        <h2>מחמאות תואמות:</h2>
-
-        <div id="complimentsResults"></div>
-
-        <div id="loading">מחפש התאמות...</div>
-        <div id="finished" style="display: none; color: green; font-weight: bold;">סיימתי לחפש!</div>
-        <button id="shareButton" style="display: none;" onclick="copyShareLink()">🔗 העתק קישור לשיתוף</button>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Input Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 card">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-600">הזינו פרטים</h2>
+                
+                <div class="mb-4">
+                    <label for="inputName" class="block text-sm font-medium text-gray-700 mb-1">שם מלא:</label>
+                    <input type="text" id="inputName" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="הקלד שם">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">מין:</label>
+                    <select id="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="male">זכר</option>
+                        <option value="female">נקבה</option>
+                    </select>
+                </div>
+                
+                <div class="flex flex-col space-y-3">
+                    <button onclick="calculateGematria()" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 btn-primary">
+                        <i class="fas fa-calculator mr-2"></i> חשב גימטריה
+                    </button>
+                    
+                    <button onclick="calculateConstruction()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        <i class="fas fa-font mr-2"></i> חשב קונסטרוקציה
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="md:col-span-2">
+                <div class="bg-white rounded-lg shadow-md p-6 card mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-indigo-600">תוצאות</h2>
+                        <div id="exportButtons" class="hidden no-print">
+                            <button onclick="printResults()" class="px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm mr-2 btn-secondary">
+                                <i class="fas fa-print mr-1"></i> הדפס
+                            </button>
+                            <button onclick="saveAsText()" class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm mr-2 btn-success">
+                                <i class="fas fa-file-alt mr-1"></i> שמור כטקסט
+                            </button>
+                            <button onclick="saveAsPDF()" class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm btn-danger">
+                                <i class="fas fa-file-pdf mr-1"></i> שמור כ-PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="loading" class="hidden">
+                        <div class="loading-spinner"></div>
+                        <p class="text-center mt-2 text-gray-600">טוען מחמאות...</p>
+                    </div>
+                    
+                    <div id="finished" class="hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 id="detailsTitle" class="text-lg font-medium text-gray-800">פירוט גימטריה:</h3>
+                            <button id="shareButton" onclick="copyShareLink()" class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm hidden no-print">
+                                <i class="fas fa-share-alt mr-1"></i> שתף תוצאות
+                            </button>
+                        </div>
+                        
+                        <div id="gematriaResults" class="mb-6 p-4 bg-gray-50 rounded-md"></div>
+                        
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">מחמאות מתאימות:</h3>
+                        <div id="complimentsResults" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const { jsPDF } = window.jspdf;
+        
+        const gematriaMap = {
+            'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
+            'י': 10, 'כ': 20, 'ך': 20, 'ל': 30, 'מ': 40, 'ם': 40, 'נ': 50, 'ן': 50,
+            'ס': 60, 'ע': 70, 'פ': 80, 'ף': 80, 'צ': 90, 'ץ': 90, 'ק': 100, 'ר': 200,
+            'ש': 300, 'ת': 400
+        };
+
+        // מטמון למחמאות כדי למנוע קריאות חוזרות לשרת
+        const complimentsCache = { male: null, female: null };
+
+        function calculateWordGematria(word) {
+            return word.split('').reduce((sum, char) => sum + (gematriaMap[char] || 0), 0);
+        }
+
+        function calculateGematria() {
+            updateDetailsTitle("gematria"); // עדכון כותרת הפירוט בהתאם
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value;
+            if (!name) return;
+            
+            const gematriaResults = document.getElementById('gematriaResults');
+            const complimentsResults = document.getElementById('complimentsResults');
+            const loading = document.getElementById('loading');
+            const finished = document.getElementById('finished');
+            const shareButton = document.getElementById('shareButton');
+            const exportButtons = document.getElementById('exportButtons');
+            
+            gematriaResults.innerHTML = "";
+            complimentsResults.innerHTML = "";
+            loading.style.display = "block";
+            finished.style.display = "none";
+            shareButton.style.display = "none";
+            exportButtons.classList.add("hidden");
+            
+            let totalGematria = calculateWordGematria(name);
+            
+            name.split('').forEach(char => {
+                if (gematriaMap[char]) {
+                    const p = document.createElement("p");
+                    p.textContent = `${char} = ${gematriaMap[char]}`;
+                    gematriaResults.appendChild(p);
+                }
+            });
+            
+            const totalP = document.createElement("p");
+            totalP.innerHTML = `<strong>סך הכל גימטרייה: ${totalGematria}</strong>`;
+            totalP.classList.add("text-lg", "font-bold", "mt-2");
+            gematriaResults.appendChild(totalP);
+            
+            const fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+            
+            if (complimentsCache[gender]) {
+                findMatchingCompliments(complimentsCache[gender], totalGematria, name);
+            } else {
+                fetch(fileToLoad)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.text();
+                    })
+                    .then(text => {
+                        if (!text.trim()) {
+                            throw new Error("הקובץ ריק");
+                        }
+                        complimentsCache[gender] = text;
+                        findMatchingCompliments(text, totalGematria, name);
+                    })
+                    .catch(error => {
+                        console.error("שגיאה בטעינת המחמאות:", error);
+                        loading.style.display = "none";
+                        complimentsResults.innerHTML = `<p class='text-red-500'>שגיאה בטעינת המחמאות: ${error.message}</p>`;
+                    });
+            }
+            
+            // הצגת כפתור השיתוף
+            shareButton.style.display = "block";
+            exportButtons.classList.remove("hidden");
+            
+            // הוספת הכפתור "פירוט גימטרייה לכל המחמאות"
+            addGlobalDetailsButton();
+        }
+        
+        // יצירת קישור שיתוף והעתקתו ללוח
+        function copyShareLink() {
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value;
+            const url = `${window.location.origin}${window.location.pathname}?Name=${encodeURIComponent(name)}&Gender=${gender}`;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                alert("📋 הקישור הועתק ללוח!");
+            }).catch(err => {
+                console.error("שגיאה בהעתקת הקישור", err);
+            });
+        }
+
+        // טעינת פרמטרים מה-URL
+        function loadFromUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get("Name");
+            const gender = params.get("Gender");
+            
+            if (name && gender) {
+                document.getElementById('inputName').value = name;
+                document.getElementById('gender').value = gender;
+                calculateGematria();
+            }
+        }
+
+        // הפעלת טעינת הפרמטרים בהחלה
+        window.onload = loadFromUrlParams;
+
+        function updateDetailsTitle(mode) {
+            const title = document.getElementById("detailsTitle");
+            title.textContent = mode === "gematria" ? "פירוט גימטריה:" : "פירוט קונסטרוקציה:";
+        }
+
+        function calculateConstruction() {
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value;
+            
+            if (!name) return;
+            
+            updateDetailsTitle("construction");
+            
+            const gematriaResults = document.getElementById('gematriaResults');
+            const complimentsResults = document.getElementById('complimentsResults');
+            const loading = document.getElementById('loading');
+            const finished = document.getElementById('finished');
+            const shareButton = document.getElementById('shareButton');
+            const exportButtons = document.getElementById('exportButtons');
+            
+            gematriaResults.innerHTML = "";
+            complimentsResults.innerHTML = "";
+            loading.style.display = "block";
+            finished.style.display = "none";
+            shareButton.style.display = "none";
+            exportButtons.classList.add("hidden");
+            
+            name.split('').forEach(char => {
+                const p = document.createElement("p");
+                p.textContent = char;
+                p.classList.add("text-xl", "inline-block", "mx-1");
+                gematriaResults.appendChild(p);
+            });
+            
+            const nameP = document.createElement("p");
+            nameP.innerHTML = `<strong class="text-lg">השם שהוכנס הוא: ${name}</strong>`;
+            nameP.classList.add("mt-4");
+            gematriaResults.appendChild(nameP);
+            
+            const countP = document.createElement("p");
+            countP.innerHTML = `<strong class="text-lg">מספר האותיות בשם הוא: ${name.length}</strong>`;
+            countP.classList.add("mt-2");
+            gematriaResults.appendChild(countP);
+            
+            const fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+            
+            if (complimentsCache[gender]) {
+                findMatchingComplimentsByLetters(complimentsCache[gender], name);
+            } else {
+                fetch(fileToLoad)
+                    .then(response => response.text())
+                    .then(text => {
+                        complimentsCache[gender] = text;
+                        findMatchingComplimentsByLetters(text, name);
+                    })
+                    .catch(error => {
+                        console.error("שגיאה בטעינת המחמאות", error);
+                        loading.style.display = "none";
+                        complimentsResults.innerHTML = "<p class='text-red-500'>שגיאה בטעינת המחמאות. נסה שוב מאוחר יותר.</p>";
+                    });
+            }
+            
+            // הצגת כפתור השיתוף
+            shareButton.style.display = "block";
+            exportButtons.classList.remove("hidden");
+        }
+
+        function findMatchingComplimentsByLetters(text, name) {
+            const complimentsResults = document.getElementById('complimentsResults');
+            const loading = document.getElementById('loading');
+            const finished = document.getElementById('finished');
+            
+            let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
+            let letters = new Set(name.split(''));
+            let foundLetters = new Set();
+            let notFoundLetters = [];
+            
+            let groupedCompliments = {};
+            
+            letters.forEach(letter => {
+                groupedCompliments[letter] = compliments.filter(compliment => compliment.startsWith(letter));
+                if (groupedCompliments[letter].length > 0) {
+                    foundLetters.add(letter);
+                } else {
+                    notFoundLetters.push(letter);
+                }
+            });
+            
+            name.split('').forEach(letter => {
+                let counter = 0; // ספירה מתחילה מחדש לכל אות
+                
+                if (groupedCompliments[letter] && groupedCompliments[letter].length > 0) {
+                    groupedCompliments[letter].forEach(compliment => {
+                        addComplimentResult(compliment, name, counter); // שמירה על המספור
+                        counter++; // העלאת המספר לכל מחמאה
+                    });
+                }
+            });
+            
+            if (notFoundLetters.length > 0) {
+                const notFoundP = document.createElement("p");
+                notFoundP.style.color = "red";
+                notFoundP.innerHTML = `<strong>מצטערים! אבל לא נמצאו מחמאות שמתחילות באותיות הבאות: ${notFoundLetters.join(", ")}</strong>`;
+                notFoundP.classList.add("mb-4", "text-red-600");
+                complimentsResults.insertBefore(notFoundP, complimentsResults.firstChild);
+            }
+            
+            loading.style.display = "none";
+            finished.style.display = "block";
+        }
+
+        function addComplimentResult(complimentText, name, index = null) {
+            const complimentsResults = document.getElementById('complimentsResults');
+            
+            const div = document.createElement("div");
+            div.classList.add("compliment-card", "bg-gray-50", "p-4", "rounded-md", "mb-3");
+            
+            // יצירת שורה ראשונה עם מספר וכפתורים
+            const firstRow = document.createElement("div");
+            firstRow.classList.add("flex", "justify-between", "items-center", "mb-2");
+            
+            // יצירת אלמנט מספר המחמאה
+            const numberSpan = document.createElement("span");
+            numberSpan.classList.add("text-gray-600", "font-bold");
+            
+            if (index !== null) {
+                numberSpan.textContent = (index + 1) + ". ";
+            }
+            
+            // יצירת כפתורים
+            const buttonsDiv = document.createElement("div");
+            buttonsDiv.classList.add("flex", "space-x-2");
+            
+            // כפתור העתקה
+            const copyButton = document.createElement("button");
+            copyButton.innerHTML = "<i class='fas fa-copy'></i>";
+            copyButton.classList.add("px-2", "py-1", "bg-blue-100", "text-blue-600", "rounded-md", "hover:bg-blue-200", "text-sm");
+            copyButton.title = "העתק מחמאה";
+            copyButton.onclick = () => copyToClipboard(complimentText);
+            
+            // כפתור פירוט גימטריה (אם במצב גימטריה)
+            let detailsButton = null;
+            if (document.getElementById("detailsTitle").textContent === "פירוט גימטריה:") {
+                detailsButton = document.createElement("button");
+                detailsButton.innerHTML = "<i class='fas fa-info-circle'></i>";
+                detailsButton.classList.add("px-2", "py-1", "bg-green-100", "text-green-600", "rounded-md", "hover:bg-green-200", "text-sm");
+                detailsButton.title = "פירוט גימטריה";
+                
+                const detailsDiv = document.createElement("div");
+                detailsDiv.style.display = "none";
+                detailsDiv.classList.add("gematria-details", "mt-3", "p-3", "bg-white", "rounded-md", "border", "border-gray-200");
+                detailsDiv.innerHTML = generateGematriaDetails(complimentText);
+                
+                detailsButton.onclick = () => {
+                    if (detailsDiv.style.display === "none") {
+                        detailsDiv.style.display = "block";
+                        detailsButton.innerHTML = "<i class='fas fa-times-circle'></i>";
+                        detailsButton.title = "סגור פירוט";
+                    } else {
+                        detailsDiv.style.display = "none";
+                        detailsButton.innerHTML = "<i class='fas fa-info-circle'></i>";
+                        detailsButton.title = "פירוט גימטריה";
+                    }
+                };
+                
+                div.appendChild(detailsDiv);
+            }
+            
+            // הוספת אלמנטים לשורה הראשונה
+            firstRow.appendChild(numberSpan);
+            buttonsDiv.appendChild(copyButton);
+            if (detailsButton) buttonsDiv.appendChild(detailsButton);
+            firstRow.appendChild(buttonsDiv);
+            
+            // יצירת אלמנט המחמאה
+            const textDiv = document.createElement("div");
+            textDiv.textContent = complimentText;
+            textDiv.classList.add("text-lg", "font-medium", "text-gray-800");
+            
+            // הדגשת האות הראשונה אם היא בשם
+            highlightFirstLetter(textDiv, name);
+            
+            // הוספת הכל ל-div הראשי
+            div.appendChild(firstRow);
+            div.appendChild(textDiv);
+            
+            complimentsResults.appendChild(div);
+        }
+
+        // פונקציה להעתקת הטקסט ללוח
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // יצירת התראה יפה
+                const alertDiv = document.createElement("div");
+                alertDiv.textContent = "המחמאה הועתקה!";
+                alertDiv.classList.add("fixed", "bottom-4", "right-4", "bg-green-500", "text-white", "px-4", "py-2", "rounded-md", "shadow-lg", "z-50", "animate-fade-in");
+                
+                document.body.appendChild(alertDiv);
+                
+                setTimeout(() => {
+                    alertDiv.classList.add("animate-fade-out");
+                    setTimeout(() => {
+                        document.body.removeChild(alertDiv);
+                    }, 500);
+                }, 2000);
+            }).catch(err => {
+                console.error("שגיאה בהעתקה: ", err);
+            });
+        }
+
+        function reverseWords(phrase) {
+            return phrase.split(' ').reverse().join(' ');
+        }
+
+        function findMatchingCompliments(text, targetGematria, name) {
+            const complimentsResults = document.getElementById('complimentsResults');
+            const loading = document.getElementById('loading');
+            const finished = document.getElementById('finished');
+            
+            let compliments = text.split("\n").map(line => line.trim()).filter(Boolean);
+            let foundCompliments = new Set();
+            let sortedCompliments = [];
+            let finalCompliments = []; // מערך חדש שיאחד את שתי הבדיקות
+            
+            // בדיקה רגילה של מחמאה בודדת
+            for (let compliment of compliments) {
+                let sum = calculateWordGematria(compliment);
+                if (sum === targetGematria && !foundCompliments.has(compliment) && !foundCompliments.has(reverseWords(compliment))) {
+                    foundCompliments.add(compliment);
+                    sortedCompliments.push(compliment);
+                }
+            }
+            
+            // קודם נכניס את המחמאות הבודדות
+            finalCompliments.push(...sortedCompliments);
+            
+            // בדיקה עם חיבור של שתי מחמאות בעזרת "ו"
+            for (let i = 0; i < compliments.length; i++) {
+                for (let j = i + 1; j < compliments.length; j++) {
+                    let combinedCompliment = compliments[i] + " ו" + compliments[j];
+                    let combinedSum = calculateWordGematria(compliments[i]) + calculateWordGematria("ו") + calculateWordGematria(compliments[j]);
+                    
+                    if (combinedSum === targetGematria && !foundCompliments.has(combinedCompliment)) {
+                        foundCompliments.add(combinedCompliment);
+                        finalCompliments.push(combinedCompliment); // מוסיפים למחמאות הסופיות
+                    }
+                }
+            }
+            
+            // מיון התוצאות כדי שהתצוגה תהיה מסודרת
+            finalCompliments.sort((a, b) => a.localeCompare(b));
+            
+            if (finalCompliments.length === 0) {
+                complimentsResults.innerHTML = "<p class='text-gray-600'>לא נמצאו מחמאות מתאימות</p>";
+            } else {
+                finalCompliments.forEach((compliment, index) => {
+                    addComplimentResult(compliment, name, index);
+                });
+            }
+            
+            loading.style.display = "none";
+            finished.style.display = "block";
+        }
+
+        function generateGematriaDetails(compliment) {
+            return compliment.split('').map(char => 
+                `<span class="${gematriaMap[char] ? 'font-bold' : ''}">${char} = ${gematriaMap[char] || 0}</span>`
+            ).join('<br>') + 
+            `<br><strong class="text-indigo-600">סך הכל גימטריה: ${calculateWordGematria(compliment)}</strong>`;
+        }
+
+        function highlightFirstLetter(element, name) {
+            let firstLetter = element.textContent.charAt(0);
+            if (name.includes(firstLetter)) {
+                element.innerHTML = `<span class="first-letter">${firstLetter}</span>${element.textContent.slice(1)}`;
+            }
+        }
+
+        function addGlobalDetailsButton() {
+            const complimentsResults = document.getElementById('complimentsResults');
+            
+            // אם הכפתור כבר קיים, לא מוסיפים אותו שוב
+            if (document.getElementById("globalDetailsButton")) return;
+            
+            // יצירת כפתור ראשי לשליטה על פירוט הגימטריה
+            const globalButton = document.createElement("button");
+            globalButton.id = "globalDetailsButton";
+            globalButton.textContent = "פירוט גימטריה לכל המחמאות";
+            globalButton.classList.add("px-4", "py-2", "bg-indigo-100", "text-indigo-700", "rounded-md", "hover:bg-indigo-200", "mb-4", "w-full", "no-print");
+            
+            // פונקציה ללחיצה על הכפתור
+            globalButton.onclick = () => {
+                let allDetails = document.querySelectorAll(".gematria-details");
+                let allButtons = document.querySelectorAll("[title='פירוט גימטריה'], [title='סגור פירוט']");
+                
+                if (globalButton.textContent === "פירוט גימטריה לכל המחמאות") {
+                    allDetails.forEach(detail => detail.style.display = "block");
+                    allButtons.forEach(button => {
+                        button.innerHTML = "<i class='fas fa-times-circle'></i>";
+                        button.title = "סגור פירוט";
+                    });
+                    globalButton.textContent = "סגור פירוט גימטריה לכל המחמאות";
+                } else {
+                    allDetails.forEach(detail => detail.style.display = "none");
+                    allButtons.forEach(button => {
+                        button.innerHTML = "<i class='fas fa-info-circle'></i>";
+                        button.title = "פירוט גימטריה";
+                    });
+                    globalButton.textContent = "פירוט גימטריה לכל המחמאות";
+                }
+            };
+            
+            // הוספת הכפתור לרשימת המחמאות (מעל כל המחמאות)
+            complimentsResults.prepend(globalButton);
+        }
+        
+        // פונקציות להדפסה ושמירה
+        function printResults() {
+            window.print();
+        }
+        
+        function saveAsText() {
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value === "male" ? "זכר" : "נקבה";
+            const detailsTitle = document.getElementById("detailsTitle").textContent;
+            const gematriaResults = document.getElementById("gematriaResults").textContent;
+            const complimentsResults = document.getElementById("complimentsResults").textContent;
+            
+            let textContent = `מחשבון גימטריה ומחמאות\n\n`;
+            textContent += `שם: ${name}\n`;
+            textContent += `מין: ${gender}\n\n`;
+            textContent += `${detailsTitle}\n${gematriaResults}\n\n`;
+            textContent += `מחמאות מתאימות:\n${complimentsResults}`;
+            
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `מחמאות_לפי_גימטריה_${name}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function saveAsPDF() {
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value === "male" ? "זכר" : "נקבה";
+            const detailsTitle = document.getElementById("detailsTitle").textContent;
+            const gematriaResults = document.getElementById("gematriaResults");
+            const complimentsResults = document.getElementById("complimentsResults");
+            
+            // יצירת PDF עם jsPDF
+            const doc = new jsPDF();
+            
+            // כותרת
+            doc.setFontSize(20);
+            doc.text('מחשבון גימטריה ומחמאות', 105, 15, { align: 'center' });
+            
+            // פרטי המשתמש
+            doc.setFontSize(14);
+            doc.text(`שם: ${name}`, 14, 30);
+            doc.text(`מין: ${gender}`, 14, 40);
+            
+            // תוצאות גימטריה
+            doc.setFontSize(16);
+            doc.text(detailsTitle, 14, 55);
+            
+            doc.setFontSize(12);
+            const gematriaLines = gematriaResults.textContent.split('\n');
+            let yPos = 65;
+            gematriaLines.forEach(line => {
+                if (yPos > 280) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                doc.text(line, 14, yPos);
+                yPos += 7;
+            });
+            
+            // מחמאות
+            doc.setFontSize(16);
+            doc.text('מחמאות מתאימות:', 14, yPos + 10);
+            doc.setFontSize(12);
+            yPos += 20;
+            
+            const complimentItems = complimentsResults.querySelectorAll('.compliment-card');
+            complimentItems.forEach(item => {
+                if (yPos > 280) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                
+                // מספר וטקסט המחמאה
+                const number = item.querySelector('span:first-child')?.textContent || '';
+                const text = item.querySelector('div.text-lg').textContent;
+                doc.text(`${number} ${text}`, 14, yPos);
+                yPos += 10;
+                
+                // פירוט גימטריה אם קיים
+                const details = item.querySelector('.gematria-details');
+                if (details && details.style.display !== 'none') {
+                    const detailLines = details.textContent.split('\n');
+                    detailLines.forEach(line => {
+                        if (yPos > 280) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        doc.text(line, 20, yPos);
+                        yPos += 7;
+                    });
+                }
+                
+                yPos += 5;
+            });
+            
+            // שמירת הקובץ
+            doc.save(`מחמאות_לפי_גימטריה_${name}.pdf`);
+        }
+        
+        // הפיכת הפונקציות לזמינות גלובלית
+        window.calculateConstruction = calculateConstruction;
+        window.calculateGematria = calculateGematria;
+        window.printResults = printResults;
+        window.saveAsText = saveAsText;
+        window.saveAsPDF = saveAsPDF;
+        window.copyShareLink = copyShareLink;
+    </script>
 </body>
 </html>
-
