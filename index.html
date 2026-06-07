@@ -192,7 +192,7 @@
                         
                         <div id="gematriaResults" class="mb-6 p-4 bg-gray-50 rounded-md"></div>
                         
-                        <h3 class="text-lg font-medium text-gray-800 mb-4">מחמאות מתאימות:</h3>
+                        <h3 id="resultsTitle" class="text-lg font-medium text-gray-800 mb-4">מחמאות מתאימות:</h3>
                         <div id="complimentsResults" class="space-y-4"></div>
                     </div>
                 </div>
@@ -224,6 +224,8 @@
             const contentType = document.getElementById('contentType').value;
             
             if (!name) return;
+            
+            updateResultsTitle(contentType); // עדכון כותרת התוצאות
             
             const gematriaResults = document.getElementById('gematriaResults');
             const complimentsResults = document.getElementById('complimentsResults');
@@ -332,6 +334,17 @@
             title.textContent = mode === "gematria" ? "פירוט גימטריה:" : "פירוט קונסטרוקציה:";
         }
 
+        function updateResultsTitle(contentType) {
+            const resultsTitle = document.getElementById("resultsTitle");
+            const titlesMap = {
+                'compliments': 'מחמאות מתאימות:',
+                'blessings': 'ברכות מתאימות:',
+                'motivation': 'משפטי מוטיבציה מתאימים:',
+                'sayings': 'פתגמים מתאימים:'
+            };
+            resultsTitle.textContent = titlesMap[contentType] || 'תוצאות מתאימות:';
+        }
+
         function calculateConstruction() {
             const name = document.getElementById('inputName').value.trim();
             const gender = document.getElementById('gender').value;
@@ -340,6 +353,7 @@
             if (!name) return;
             
             updateDetailsTitle("construction");
+            updateResultsTitle(contentType); // עדכון כותרת התוצאות
             
             const gematriaResults = document.getElementById('gematriaResults');
             const complimentsResults = document.getElementById('complimentsResults');
@@ -438,10 +452,19 @@
             });
             
             if (notFoundLetters.length > 0) {
+                const contentType = document.getElementById('contentType').value;
+                const contentMap = {
+                    'compliments': 'מחמאות',
+                    'blessings': 'ברכות',
+                    'motivation': 'משפטי מוטיבציה',
+                    'sayings': 'פתגמים'
+                };
+                const contentName = contentMap[contentType] || 'תוצאות';
+                
                 const notFoundP = document.createElement("p");
-                notFoundP.style.color = "red";
-                notFoundP.innerHTML = `<strong>מצטערים! אבל לא נמצאו מחמאות שמתחילות באותיות הבאות: ${notFoundLetters.join(", ")}</strong>`;
-                notFoundP.classList.add("mb-4", "text-red-600");
+                notFoundP.style.color = "#9CA3AF";
+                notFoundP.innerHTML = `<strong>לא כל האותיות נמצאו - חלק מהאותיות (${notFoundLetters.join(", ")}) אין ${contentName} מתאימות במאגר.</strong>`;
+                notFoundP.classList.add("mb-4", "text-gray-500");
                 complimentsResults.insertBefore(notFoundP, complimentsResults.firstChild);
             }
             
@@ -482,7 +505,7 @@
             let detailsButton = null;
             if (document.getElementById("detailsTitle").textContent === "פירוט גימטריה:") {
                 detailsButton = document.createElement("button");
-                detailsButton.innerHTML = "<i class='fas fa-info-circle'></i>";
+                detailsButton.innerHTML = "<i class='fas fa-chevron-down'></i>";
                 detailsButton.classList.add("px-2", "py-1", "bg-green-100", "text-green-600", "rounded-md", "hover:bg-green-200", "text-sm");
                 detailsButton.title = "פירוט גימטריה";
                 
@@ -591,7 +614,15 @@
             finalCompliments.sort((a, b) => a.localeCompare(b));
             
             if (finalCompliments.length === 0) {
-                complimentsResults.innerHTML = "<p class='text-gray-600'>לא נמצאו מחמאות מתאימות</p>";
+                const contentType = document.getElementById('contentType').value;
+                const messagesMap = {
+                    'compliments': 'לא נמצאו מחמאות מתאימות לשם זה.',
+                    'blessings': 'לא נמצאו ברכות מתאימות לשם זה.',
+                    'motivation': 'לא נמצאו משפטי מוטיבציה מתאימים לשם זה.',
+                    'sayings': 'לא נמצאו פתגמים מתאימים לשם זה.'
+                };
+                const message = messagesMap[contentType] || 'לא נמצאו תוצאות מתאימות לשם זה.';
+                complimentsResults.innerHTML = `<p class='text-gray-600 text-center'>${message}</p>`;
             } else {
                 finalCompliments.forEach((compliment, index) => {
                     addComplimentResult(compliment, name, index);
