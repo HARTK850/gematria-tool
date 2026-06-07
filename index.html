@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="מחשבון מחמאות, מחשבון גימטרייה, מחשבון אקונסטריכון, מחמאות, גימטרייה, אקונסטריכון">
-    <meta name="description" content="מחפש מחמאות מותאמות לשם שלכם בגימטרייה או בראשי תיבות מתוך מאגר ענק של כ2,000 מחמאות">
-    <title>מחשבון מחמאות</title>
+    <meta name="keywords" content="מחשבון מחמאות, מחשבון ברכות, מחשבון גימטרייה, מחשבון אקונסטריכון, מחמאות, ברכות, פתגמים, משפטי מוטיבציה, גימטרייה, אקונסטריכון">
+    <meta name="description" content="מחפש מחמאות, ברכות, משפטי מוטיבציה ופתגמים מותאמים לשם שלכם בגימטרייה או בראשי תיבות מתוך מאגר ענק של כ2,000 ביטויים לכל קטגוריה">
+    <title>מחשבון מחמאות, ברכות ופתגמים</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -116,8 +116,8 @@
 <body class="min-h-screen bg-gray-50">
     <div class="container mx-auto px-4 py-8">
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-indigo-600 mb-2">מחשבון מחמאות</h1>
-            <p class="text-lg text-gray-600">הזינו את השם וקבלו מחמאות לפי הגימטריה או קונסטרוקציה של האותיות</p>
+            <h1 class="text-4xl font-bold text-indigo-600 mb-2">מחשבון מחמאות, ברכות ופתגמים</h1>
+            <p class="text-lg text-gray-600">הזינו את השם וקבלו מחמאות, ברכות, משפטי מוטיבציה ופתגמים לפי הגימטריה או קונסטרוקציה של האותיות</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -145,6 +145,18 @@
                     
                     <button onclick="calculateConstruction()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         <i class="fas fa-font mr-2"></i> חשב קונסטרוקציה
+                    </button>
+                    
+                    <button onclick="calculateBlessings()" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                        <i class="fas fa-hands-praying mr-2"></i> חשב ברכות
+                    </button>
+                    
+                    <button onclick="calculateMotivation()" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                        <i class="fas fa-fire mr-2"></i> חשב מוטיבציה
+                    </button>
+                    
+                    <button onclick="calculateSayings()" class="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
+                        <i class="fas fa-quote-left mr-2"></i> חשב פתגמים
                     </button>
                 </div>
             </div>
@@ -461,11 +473,11 @@
                 detailsButton.onclick = () => {
                     if (detailsDiv.style.display === "none") {
                         detailsDiv.style.display = "block";
-                        detailsButton.innerHTML = "<i class='fas fa-times-circle'></i>";
+                        detailsButton.innerHTML = "<i class='fas fa-chevron-up'></i>";
                         detailsButton.title = "סגור פירוט";
                     } else {
                         detailsDiv.style.display = "none";
-                        detailsButton.innerHTML = "<i class='fas fa-info-circle'></i>";
+                        detailsButton.innerHTML = "<i class='fas fa-chevron-down'></i>";
                         detailsButton.title = "פירוט גימטריה";
                     }
                 };
@@ -603,14 +615,14 @@
                 if (globalButton.textContent === "פירוט גימטריה לכל המחמאות") {
                     allDetails.forEach(detail => detail.style.display = "block");
                     allButtons.forEach(button => {
-                        button.innerHTML = "<i class='fas fa-times-circle'></i>";
+                        button.innerHTML = "<i class='fas fa-chevron-up'></i>";
                         button.title = "סגור פירוט";
                     });
                     globalButton.textContent = "סגור פירוט גימטריה לכל המחמאות";
                 } else {
                     allDetails.forEach(detail => detail.style.display = "none");
                     allButtons.forEach(button => {
-                        button.innerHTML = "<i class='fas fa-info-circle'></i>";
+                        button.innerHTML = "<i class='fas fa-chevron-down'></i>";
                         button.title = "פירוט גימטריה";
                     });
                     globalButton.textContent = "פירוט גימטריה לכל המחמאות";
@@ -725,9 +737,120 @@
             doc.save(`מחמאות_לפי_גימטריה_${name}.pdf`);
         }
         
+        // פונקציות חדשות לברכות, מוטיבציה ופתגמים
+        async function calculateBlessings() {
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value;
+            
+            if (!name) {
+                alert('אנא הקלד שם');
+                return;
+            }
+            
+            await performCalculation(name, gender, 'blessings', `בְרָכוֹת עבור ${name}`);
+        }
+        
+        async function calculateMotivation() {
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value;
+            
+            if (!name) {
+                alert('אנא הקלד שם');
+                return;
+            }
+            
+            await performCalculation(name, gender, 'motivation', `משפטי מוטיבציה עבור ${name}`);
+        }
+        
+        async function calculateSayings() {
+            const name = document.getElementById('inputName').value.trim();
+            const gender = document.getElementById('gender').value;
+            
+            if (!name) {
+                alert('אנא הקלד שם');
+                return;
+            }
+            
+            await performCalculation(name, gender, 'sayings', `פתגמים עבור ${name}`);
+        }
+        
+        async function performCalculation(name, gender, type, resultTitle) {
+            const loading = document.getElementById('loading');
+            const finished = document.getElementById('finished');
+            const exportButtons = document.getElementById('exportButtons');
+            const detailsTitle = document.getElementById('detailsTitle');
+            const gematriaResults = document.getElementById('gematriaResults');
+            const complimentsResults = document.getElementById('complimentsResults');
+            
+            // בחירת קובץ לפי סוג ותוצאה
+            let fileName = '';
+            if (type === 'blessings') {
+                fileName = gender === 'male' ? 'brachot_male.txt' : 'brachot_female.txt';
+            } else if (type === 'motivation') {
+                fileName = gender === 'male' ? 'motivation_male.txt' : 'motivation_female.txt';
+            } else if (type === 'sayings') {
+                fileName = gender === 'male' ? 'sayings_male.txt' : 'sayings_female.txt';
+            }
+            
+            // איפוס התוצאות
+            gematriaResults.innerHTML = '';
+            complimentsResults.innerHTML = '';
+            exportButtons.classList.remove('hidden');
+            loading.style.display = 'block';
+            finished.style.display = 'none';
+            
+            try {
+                // טעינת הקובץ המתאים
+                const response = await fetch(fileName);
+                if (!response.ok) {
+                    throw new Error(`לא ניתן לטעון את ${fileName}. ודא שהקובץ קיים באותה תיקייה.`);
+                }
+                const text = await response.text();
+                const items = text.split('\n').filter(line => line.trim());
+                
+                // חישוב הגימטריה
+                const gematria = calculateWordGematria(name);
+                detailsTitle.textContent = `פירוט גימטריה עבור ${name}:`;
+                gematriaResults.innerHTML = generateGematriaDetails(name);
+                
+                // חיפוש התוצאות
+                const finalResults = [];
+                for (const item of items) {
+                    const itemGematria = calculateWordGematria(item);
+                    const itemAcronym = item.split('').map(char => char.charAt(0)).join('');
+                    const nameAcronym = name.split('').map(char => char.charAt(0)).join('');
+                    
+                    if (itemGematria === gematria || itemAcronym === nameAcronym) {
+                        finalResults.push(item);
+                    }
+                }
+                
+                finalResults.sort((a, b) => a.localeCompare(b));
+                
+                if (finalResults.length === 0) {
+                    complimentsResults.innerHTML = "<p class='text-gray-600'>לא נמצאו תוצאות מתאימות</p>";
+                } else {
+                    finalResults.forEach((item, index) => {
+                        addComplimentResult(item, name, index);
+                    });
+                    addGlobalDetailsButton();
+                }
+                
+                loading.style.display = 'none';
+                finished.style.display = 'block';
+            } catch (error) {
+                complimentsResults.innerHTML = `<p class='text-red-600'>שגיאה: ${error.message}</p>`;
+                loading.style.display = 'none';
+                finished.style.display = 'block';
+            }
+        }
+        
         // הפיכת הפונקציות לזמינות גלובלית
         window.calculateConstruction = calculateConstruction;
         window.calculateGematria = calculateGematria;
+        window.calculateBlessings = calculateBlessings;
+        window.calculateMotivation = calculateMotivation;
+        window.calculateSayings = calculateSayings;
         window.printResults = printResults;
         window.saveAsText = saveAsText;
         window.saveAsPDF = saveAsPDF;
