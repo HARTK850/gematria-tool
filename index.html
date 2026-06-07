@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="מחשבון מחמאות, מחשבון ברכות, מחשבון גימטרייה, מחשבון אקונסטריכון, מחמאות, ברכות, פתגמים, משפטי מוטיבציה, גימטרייה, אקונסטריכון">
     <meta name="description" content="מחפש מחמאות, ברכות, משפטי מוטיבציה ופתגמים מותאמים לשם שלכם בגימטרייה או בראשי תיבות מתוך מאגר ענק של כ2,000 ביטויים לכל קטגוריה">
-    <title>מחשבון מחמאות, ברכות ופתגמים</title>
+    <title>מחשבון מחמאות</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -130,11 +130,21 @@
                     <input type="text" id="inputName" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="הקלד שם">
                 </div>
                 
-                <div class="mb-6">
+                <div class="mb-4">
                     <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">מין:</label>
                     <select id="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="male">זכר</option>
                         <option value="female">נקבה</option>
+                    </select>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="contentType" class="block text-sm font-medium text-gray-700 mb-1">מה לחשב:</label>
+                    <select id="contentType" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="compliments">מחמאות</option>
+                        <option value="blessings">ברכות</option>
+                        <option value="motivation">משפטי מוטיבציה</option>
+                        <option value="sayings">פתגמים</option>
                     </select>
                 </div>
                 
@@ -145,18 +155,6 @@
                     
                     <button onclick="calculateConstruction()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         <i class="fas fa-font mr-2"></i> חשב קונסטרוקציה
-                    </button>
-                    
-                    <button onclick="calculateBlessings()" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                        <i class="fas fa-hands-praying mr-2"></i> חשב ברכות
-                    </button>
-                    
-                    <button onclick="calculateMotivation()" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                        <i class="fas fa-fire mr-2"></i> חשב מוטיבציה
-                    </button>
-                    
-                    <button onclick="calculateSayings()" class="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
-                        <i class="fas fa-quote-left mr-2"></i> חשב פתגמים
                     </button>
                 </div>
             </div>
@@ -223,6 +221,8 @@
             updateDetailsTitle("gematria"); // עדכון כותרת הפירוט בהתאם
             const name = document.getElementById('inputName').value.trim();
             const gender = document.getElementById('gender').value;
+            const contentType = document.getElementById('contentType').value;
+            
             if (!name) return;
             
             const gematriaResults = document.getElementById('gematriaResults');
@@ -254,10 +254,20 @@
             totalP.classList.add("text-lg", "font-bold", "mt-2");
             gematriaResults.appendChild(totalP);
             
-            const fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+            // בחירת קובץ לפי סוג התוכן
+            let fileToLoad;
+            if (contentType === 'compliments') {
+                fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+            } else if (contentType === 'blessings') {
+                fileToLoad = gender === "male" ? "brachot_male.txt" : "brachot_female.txt";
+            } else if (contentType === 'motivation') {
+                fileToLoad = gender === "male" ? "motivation_male.txt" : "motivation_female.txt";
+            } else if (contentType === 'sayings') {
+                fileToLoad = gender === "male" ? "sayings_male.txt" : "sayings_female.txt";
+            }
             
-            if (complimentsCache[gender]) {
-                findMatchingCompliments(complimentsCache[gender], totalGematria, name);
+            if (complimentsCache[gender + '_' + contentType]) {
+                findMatchingCompliments(complimentsCache[gender + '_' + contentType], totalGematria, name);
             } else {
                 fetch(fileToLoad)
                     .then(response => {
@@ -270,13 +280,13 @@
                         if (!text.trim()) {
                             throw new Error("הקובץ ריק");
                         }
-                        complimentsCache[gender] = text;
+                        complimentsCache[gender + '_' + contentType] = text;
                         findMatchingCompliments(text, totalGematria, name);
                     })
                     .catch(error => {
-                        console.error("שגיאה בטעינת המחמאות:", error);
+                        console.error("שגיאה בטעינת הקובץ:", error);
                         loading.style.display = "none";
-                        complimentsResults.innerHTML = `<p class='text-red-500'>שגיאה בטעינת המחמאות: ${error.message}</p>`;
+                        complimentsResults.innerHTML = `<p class='text-red-500'>שגיאה בטעינת הקובץ: ${error.message}</p>`;
                     });
             }
             
@@ -284,7 +294,7 @@
             shareButton.style.display = "block";
             exportButtons.classList.remove("hidden");
             
-            // הוספת הכפתור "פירוט גימטרייה לכל המחמאות"
+            // הוספת הכפתור "פירוט גימטרייה לכל התוצאות"
             addGlobalDetailsButton();
         }
         
@@ -325,6 +335,7 @@
         function calculateConstruction() {
             const name = document.getElementById('inputName').value.trim();
             const gender = document.getElementById('gender').value;
+            const contentType = document.getElementById('contentType').value;
             
             if (!name) return;
             
@@ -361,21 +372,31 @@
             countP.classList.add("mt-2");
             gematriaResults.appendChild(countP);
             
-            const fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+            // בחירת קובץ לפי סוג התוכן
+            let fileToLoad;
+            if (contentType === 'compliments') {
+                fileToLoad = gender === "male" ? "compliments_male.txt" : "compliments_female.txt";
+            } else if (contentType === 'blessings') {
+                fileToLoad = gender === "male" ? "brachot_male.txt" : "brachot_female.txt";
+            } else if (contentType === 'motivation') {
+                fileToLoad = gender === "male" ? "motivation_male.txt" : "motivation_female.txt";
+            } else if (contentType === 'sayings') {
+                fileToLoad = gender === "male" ? "sayings_male.txt" : "sayings_female.txt";
+            }
             
-            if (complimentsCache[gender]) {
-                findMatchingComplimentsByLetters(complimentsCache[gender], name);
+            if (complimentsCache[gender + '_' + contentType]) {
+                findMatchingComplimentsByLetters(complimentsCache[gender + '_' + contentType], name);
             } else {
                 fetch(fileToLoad)
                     .then(response => response.text())
                     .then(text => {
-                        complimentsCache[gender] = text;
+                        complimentsCache[gender + '_' + contentType] = text;
                         findMatchingComplimentsByLetters(text, name);
                     })
                     .catch(error => {
-                        console.error("שגיאה בטעינת המחמאות", error);
+                        console.error("שגיאה בטעינת הקובץ", error);
                         loading.style.display = "none";
-                        complimentsResults.innerHTML = "<p class='text-red-500'>שגיאה בטעינת המחמאות. נסה שוב מאוחר יותר.</p>";
+                        complimentsResults.innerHTML = "<p class='text-red-500'>שגיאה בטעינת הקובץ. נסה שוב מאוחר יותר.</p>";
                     });
             }
             
@@ -737,120 +758,9 @@
             doc.save(`מחמאות_לפי_גימטריה_${name}.pdf`);
         }
         
-        // פונקציות חדשות לברכות, מוטיבציה ופתגמים
-        async function calculateBlessings() {
-            const name = document.getElementById('inputName').value.trim();
-            const gender = document.getElementById('gender').value;
-            
-            if (!name) {
-                alert('אנא הקלד שם');
-                return;
-            }
-            
-            await performCalculation(name, gender, 'blessings', `בְרָכוֹת עבור ${name}`);
-        }
-        
-        async function calculateMotivation() {
-            const name = document.getElementById('inputName').value.trim();
-            const gender = document.getElementById('gender').value;
-            
-            if (!name) {
-                alert('אנא הקלד שם');
-                return;
-            }
-            
-            await performCalculation(name, gender, 'motivation', `משפטי מוטיבציה עבור ${name}`);
-        }
-        
-        async function calculateSayings() {
-            const name = document.getElementById('inputName').value.trim();
-            const gender = document.getElementById('gender').value;
-            
-            if (!name) {
-                alert('אנא הקלד שם');
-                return;
-            }
-            
-            await performCalculation(name, gender, 'sayings', `פתגמים עבור ${name}`);
-        }
-        
-        async function performCalculation(name, gender, type, resultTitle) {
-            const loading = document.getElementById('loading');
-            const finished = document.getElementById('finished');
-            const exportButtons = document.getElementById('exportButtons');
-            const detailsTitle = document.getElementById('detailsTitle');
-            const gematriaResults = document.getElementById('gematriaResults');
-            const complimentsResults = document.getElementById('complimentsResults');
-            
-            // בחירת קובץ לפי סוג ותוצאה
-            let fileName = '';
-            if (type === 'blessings') {
-                fileName = gender === 'male' ? 'brachot_male.txt' : 'brachot_female.txt';
-            } else if (type === 'motivation') {
-                fileName = gender === 'male' ? 'motivation_male.txt' : 'motivation_female.txt';
-            } else if (type === 'sayings') {
-                fileName = gender === 'male' ? 'sayings_male.txt' : 'sayings_female.txt';
-            }
-            
-            // איפוס התוצאות
-            gematriaResults.innerHTML = '';
-            complimentsResults.innerHTML = '';
-            exportButtons.classList.remove('hidden');
-            loading.style.display = 'block';
-            finished.style.display = 'none';
-            
-            try {
-                // טעינת הקובץ המתאים
-                const response = await fetch(fileName);
-                if (!response.ok) {
-                    throw new Error(`לא ניתן לטעון את ${fileName}. ודא שהקובץ קיים באותה תיקייה.`);
-                }
-                const text = await response.text();
-                const items = text.split('\n').filter(line => line.trim());
-                
-                // חישוב הגימטריה
-                const gematria = calculateWordGematria(name);
-                detailsTitle.textContent = `פירוט גימטריה עבור ${name}:`;
-                gematriaResults.innerHTML = generateGematriaDetails(name);
-                
-                // חיפוש התוצאות
-                const finalResults = [];
-                for (const item of items) {
-                    const itemGematria = calculateWordGematria(item);
-                    const itemAcronym = item.split('').map(char => char.charAt(0)).join('');
-                    const nameAcronym = name.split('').map(char => char.charAt(0)).join('');
-                    
-                    if (itemGematria === gematria || itemAcronym === nameAcronym) {
-                        finalResults.push(item);
-                    }
-                }
-                
-                finalResults.sort((a, b) => a.localeCompare(b));
-                
-                if (finalResults.length === 0) {
-                    complimentsResults.innerHTML = "<p class='text-gray-600'>לא נמצאו תוצאות מתאימות</p>";
-                } else {
-                    finalResults.forEach((item, index) => {
-                        addComplimentResult(item, name, index);
-                    });
-                    addGlobalDetailsButton();
-                }
-                
-                loading.style.display = 'none';
-                finished.style.display = 'block';
-            } catch (error) {
-                complimentsResults.innerHTML = `<p class='text-red-600'>שגיאה: ${error.message}</p>`;
-                loading.style.display = 'none';
-                finished.style.display = 'block';
-            }
-        }
-        
         // הפיכת הפונקציות לזמינות גלובלית
         window.calculateConstruction = calculateConstruction;
         window.calculateGematria = calculateGematria;
-        window.calculateBlessings = calculateBlessings;
-        window.calculateMotivation = calculateMotivation;
-        window.calculateSayings = calculateSayings;
         window.printResults = printResults;
         window.saveAsText = saveAsText;
         window.saveAsPDF = saveAsPDF;
